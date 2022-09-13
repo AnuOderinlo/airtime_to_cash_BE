@@ -8,9 +8,9 @@ import cors from 'cors'
 import db from './config/database.config'
 
 db.sync(
-    
+
 ).then(() => {
-  console.log('Database Connected Successfully on Port 4000')
+  console.log('Database Connected Successfully')
 }).catch(err => {
   console.log(err)
 })
@@ -20,6 +20,8 @@ import indexRouter from './routes/indexRouter';
 import usersRouter from './routes/usersRouter';
 
 const app = express();
+app.use(cors()); // included cors
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -32,11 +34,11 @@ app.use('/users', usersRouter);
 
 
 // Error handling
-app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction){
-    res.locals.message = err.message
-    res.locals.error = req.app.get('env') === 'development' ? err : {}
+app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction) {
+  res.locals.message = err.message
+  res.locals.error = req.app.get('env') === 'development' ? err : {}
 
-    res.status(err.status || 500)
+  res.status(err.status || 500)
 })
 
 export default app

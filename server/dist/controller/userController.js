@@ -3,11 +3,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.createUser = exports.loginUser = void 0;
+exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
-const utilis_1 = require("../utility/utilis");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const SendMail_1 = __importDefault(require("../mailer/SendMail"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const TransactionTemplate_1 = require("../mailer/email_templates/TransactionTemplate");
+const utilis_1 = require("../utility/utilis");
+const VerificationTemplate_1 = require("../mailer/email_templates/VerificationTemplate");
+const fromUser = process.env.FROM;
+const jwtSecret = process.env.JWT_SECRET;
 async function loginUser(req, res) {
     try {
         const { username, email, password } = req.body;
@@ -45,6 +51,82 @@ async function loginUser(req, res) {
     }
 }
 exports.loginUser = loginUser;
+async function verifyUser(req, res, next) {
+    try {
+        const token = req.params.token;
+        const { id } = jsonwebtoken_1.default.verify(token, jwtSecret);
+        if (!id) {
+            res.status(401).json({
+                Error: 'Verification failed',
+                token
+            });
+        }
+        else {
+            res.status(200).json({
+                msg: "Successfully verified new user",
+                status: 1,
+                id
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "failed to verify user",
+            route: "/verify",
+            error: error,
+        });
+    }
+}
+exports.verifyUser = verifyUser;
+async function sendEmail(req, res, next) {
+    try {
+        const username = req.body.username;
+        const template = req.body.template;
+        const transactionDetails = req.body.transactionDetails;
+        if (username && template) {
+            const User = await userModel_1.UserInstance.findOne({
+                where: { username: username }
+            });
+            const { email, id } = User;
+            let html = "";
+            let fromUser = process.env.FROM;
+            let subject = "";
+            const token = jsonwebtoken_1.default.sign({ id }, jwtSecret, { expiresIn: "30mins" });
+            if (template === 'transaction') {
+                html = (0, TransactionTemplate_1.TransactionEmail)(transactionDetails);
+                subject = "Your transaction details";
+            }
+            else if (template === 'verification') {
+                html = (0, VerificationTemplate_1.emailVerificationView)(token);
+                subject = "Please confirm your email";
+            }
+            else {
+                res.status(400).json({
+                    error: "Invalid template type"
+                });
+            }
+            await SendMail_1.default.sendEmail(fromUser, email, subject, html);
+            res.status(201).json({
+                msg: "Successfully sent email",
+                status: 1,
+                email: email
+            });
+        }
+        else {
+            res.status(400).json({
+                error: "Username and template required"
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            msg: "failed to send email",
+            route: "/sendmail",
+            error: error,
+        });
+    }
+}
+exports.sendEmail = sendEmail;
 async function createUser(req, res, next) {
     const id = (0, uuid_1.v4)();
     try {
@@ -93,8 +175,9 @@ async function createUser(req, res, next) {
             isVerified: req.body.isVerified,
         };
         const userDetails = await userModel_1.UserInstance.create(userData);
+        // const id = userDetails?.id;
         const token = (0, utilis_1.generateToken)({ id });
-        res.status(201).json({
+        return res.status(201).json({
             status: 'Success',
             token,
             message: 'Successfully created a user',
