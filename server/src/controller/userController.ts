@@ -165,7 +165,6 @@ export async function createUser(req: Request, res: Response, next: NextFunction
   const id = uuidv4();
 
 
-
     try {
       const validationResult = registerUserSchema.validate(req.body, options);
       if (validationResult.error) {
@@ -236,6 +235,43 @@ export async function createUser(req: Request, res: Response, next: NextFunction
         Message: 'Unable to create a user',
       });
     }
+
+  }
+
+export async function updateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const userDetails = await UserInstance.findOne({ where: { id } });
+    const { firstname, lastname, avatar, phoneNumber } = req.body;
+    if (userDetails) {
+      const userUpdate = await userDetails.update({
+        firstname: firstname || userDetails.getDataValue("firstname"),
+        lastname: lastname || userDetails.getDataValue("lastname"),
+        avatar: avatar || userDetails.getDataValue("avatar"),
+        phoneNumber: phoneNumber || userDetails.getDataValue("phoneNumber"),
+
+      });
+      res.status(201).json({
+        status: "Success",
+        message: "Successfully updated a user",
+        data: userUpdate,
+      });
+    } else {
+      res.json({
+        status: "failed",
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: "Failed",
+      Message: "Unable to update user",
+    });
+  }
 }
 
 export async function forgotPassword(req: Request, res: Response) {
@@ -263,6 +299,7 @@ export async function forgotPassword(req: Request, res: Response) {
     console.log(error);
   }
 }
+
 export async function changePassword(req: Request, res: Response) {
   try {
     const { id } = req.params;

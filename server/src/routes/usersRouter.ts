@@ -1,7 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { changePassword, forgotPassword, sendEmail, verifyUser } from '../controller/userController';
-import { createUser } from '../controller/userController';
-import { loginUser } from "../controller/userController";
+import { changePassword, createUser, forgotPassword, loginUser, sendEmail, updateUser, verifyUser } from '../controller/userController';
 
 const router = express.Router();
 /* GET users listing. */
@@ -11,6 +9,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/sendmail', sendEmail)
 router.post('/users', createUser);
+router.patch('/users/:id', updateUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/change-password/:id', changePassword);

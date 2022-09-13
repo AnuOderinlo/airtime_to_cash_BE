@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.forgotPassword = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
+exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -194,6 +194,39 @@ async function createUser(req, res, next) {
     }
 }
 exports.createUser = createUser;
+async function updateUser(req, res, next) {
+    try {
+        const { id } = req.params;
+        const userDetails = await userModel_1.UserInstance.findOne({ where: { id } });
+        const { firstname, lastname, avatar, phoneNumber } = req.body;
+        if (userDetails) {
+            const userUpdate = await userDetails.update({
+                firstname: firstname || userDetails.getDataValue("firstname"),
+                lastname: lastname || userDetails.getDataValue("lastname"),
+                avatar: avatar || userDetails.getDataValue("avatar"),
+                phoneNumber: phoneNumber || userDetails.getDataValue("phoneNumber"),
+            });
+            res.status(201).json({
+                status: "Success",
+                message: "Successfully updated a user",
+                data: userUpdate,
+            });
+        }
+        else {
+            res.json({
+                status: "failed",
+                message: "User not found",
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            status: "Failed",
+            Message: "Unable to update user",
+        });
+    }
+}
+exports.updateUser = updateUser;
 async function forgotPassword(req, res) {
     try {
         const { email } = req.body;
