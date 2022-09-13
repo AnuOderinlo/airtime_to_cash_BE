@@ -14,7 +14,6 @@ export async function sendEmail(
 ) {
     try {
 
-
         const username = req.body.username;
         const template = req.body.template;
         const transactionDetails = req.body.transactionDetails
