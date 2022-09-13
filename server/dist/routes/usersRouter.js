@@ -14,6 +14,7 @@ router.get('/', function (req, res, next) {
 });
 router.post('/sendmail', userController_1.sendEmail);
 router.post('/users', userController_2.createUser);
+router.patch('/users/:id', userController_2.updateUser);
 router.post('/login', userController_3.loginUser);
 router.post('/register', userController_2.createUser);
 router.get('/verify/:token', userController_1.verifyUser);
