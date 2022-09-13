@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { sendEmail, verifyUser } from '../controller/userController';
+import { changePassword, forgotPassword, sendEmail, verifyUser } from '../controller/userController';
 import { createUser } from '../controller/userController';
 import { loginUser } from "../controller/userController";
 
@@ -12,7 +12,8 @@ router.get('/', function (req, res, next) {
 router.post('/sendmail', sendEmail)
 router.post('/users', createUser);
 router.post('/login', loginUser);
-router.post('/register', createUser);
+router.post('/forgot-password', forgotPassword);
+router.post('/change-password/:id', changePassword);
 router.get('/verify/:token', verifyUser);
 
 export default router;

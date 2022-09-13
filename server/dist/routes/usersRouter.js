@@ -15,6 +15,7 @@ router.get('/', function (req, res, next) {
 router.post('/sendmail', userController_1.sendEmail);
 router.post('/users', userController_2.createUser);
 router.post('/login', userController_3.loginUser);
-router.post('/register', userController_2.createUser);
+router.post('/forgot-password', userController_1.forgotPassword);
+router.post('/change-password/:id', userController_1.changePassword);
 router.get('/verify/:token', userController_1.verifyUser);
 exports.default = router;
