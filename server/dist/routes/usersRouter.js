@@ -12,5 +12,6 @@ router.get('/', function (req, res, next) {
     return res.status(200).json({ message: 'Welcome to Live POD-A Project', route: '/users' });
 });
 router.post('/login', userController_2.loginUser);
-router.post('/register', userController_1.createUser);
+router.post('/users', userController_1.createUser);
+router.patch('/users/:id', userController_1.updateUser);
 exports.default = router;

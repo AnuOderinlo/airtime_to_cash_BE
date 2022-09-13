@@ -3,17 +3,17 @@ import { v4 as uuidv4 } from 'uuid'
 import { UserInstance } from '../model/userModel'
 import { options, generateToken, loginUserSchema, registerUserSchema } from "../utility/utilis";
 import bcrypt from 'bcryptjs'
-  
+
   export async function loginUser(req: Request, res: Response) {
-    try {        
+    try {
         const { username, email, password } = req.body;
-  
+
         const validationResult = loginUserSchema.validate(req.body, options)
-        
+
         if (validationResult.error) {
             return res.status(400).json({ Error: validationResult.error.details[0].message })
         }
-  
+
         let User;
         if (username) {
           User = await UserInstance.findOne({ where: { username: username } }) as unknown as { [key: string]: string }
@@ -26,11 +26,11 @@ import bcrypt from 'bcryptjs'
         if(!User){
             return res.json({message: "Username or email is required"})
         }
-        
+
         const id = User.id;
-        
+
         const token = generateToken({ id });
-               
+
         const validUser = await bcrypt.compare(password, User.password)
 
         if (!validUser) {
@@ -38,7 +38,7 @@ import bcrypt from 'bcryptjs'
         }
 
         return res.status(200).json({ message: "Login successful", token, User })
-        
+
     } catch (err) {
         console.log(err);
         return res.status(500).json({
@@ -119,6 +119,43 @@ export async function createUser(req: Request, res: Response, next: NextFunction
     res.status(500).json({
       status: 'Failed',
       Message: 'Unable to create a user',
+    });
+  }
+}
+
+
+export async function updateUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const { id } = req.params;
+    const userDetails = await UserInstance.findOne({ where: { id } });
+    const { firstname, lastname, avatar, phoneNumber } = req.body;
+    if (userDetails) {
+      const userUpdate = await userDetails.update({
+        firstname: firstname || userDetails.getDataValue("firstname"),
+        lastname: lastname || userDetails.getDataValue("lastname"),
+        avatar: avatar || userDetails.getDataValue("avatar"),
+        phoneNumber: phoneNumber || userDetails.getDataValue("phoneNumber"),
+        
+      });
+      res.status(201).json({
+        status: "Success",
+        message: "Successfully updated a user",
+        data: userUpdate,
+      });
+    } else {
+      res.json({
+        status: "failed",
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: "Failed",
+      Message: "Unable to update user",
     });
   }
 }

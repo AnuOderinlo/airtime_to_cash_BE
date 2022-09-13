@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 const router = express.Router();
-import { createUser } from '../controller/userController';
+import { createUser, updateUser} from '../controller/userController';
 
 import {loginUser } from "../controller/userController";
 
@@ -11,6 +11,7 @@ router.get('/', function (req, res, next) {
 
 router.post('/login', loginUser);
 
-router.post('/register', createUser);
+router.post('/users', createUser);
+router.patch('/users/:id', updateUser);
 
 export default router;
