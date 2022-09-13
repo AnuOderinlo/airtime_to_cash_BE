@@ -32,6 +32,19 @@ export const registerUserSchema = Joi.object()
   })
   .with('password', 'confirm_password');
 
+
+  export const changePasswordSchema = Joi.object()
+  .keys({
+    password: Joi.string().required(),
+    confirmPassword: Joi.any()
+      .equal(Joi.ref('password'))
+      .required()
+      .label('Confirm password')
+      .messages({ 'any.only': '{{#label}} does not match' }),
+  })
+  .with('password', 'confirmPassword');
+
+
 export const options = {
   abortEarly: false,
   errors: {
