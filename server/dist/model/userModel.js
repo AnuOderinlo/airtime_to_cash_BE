@@ -13,83 +13,86 @@ UserInstance.init({
     id: {
         type: sequelize_1.DataTypes.UUIDV4,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
     },
     firstname: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'First Name cannot be empty'
+                msg: 'First Name cannot be empty',
             },
             notEmpty: {
-                msg: 'Please provide a Name'
-            }
-        }
+                msg: 'Please provide a Name',
+            },
+        },
     },
     lastname: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'Last Name cannot be empty'
+                msg: 'Last Name cannot be empty',
             },
             notEmpty: {
-                msg: 'Please provide a Name'
-            }
-        }
+                msg: 'Please provide a Name',
+            },
+        },
     },
     username: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'Username cannot be empty'
+                msg: 'Username cannot be empty',
             },
             notEmpty: {
-                msg: 'Please provide a Username'
-            }
-        }
+                msg: 'Please provide a Username',
+            },
+        },
+        unique: true,
     },
     email: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'Email cannot be empty'
+                msg: 'Email cannot be empty',
             },
             isEmail: {
-                msg: 'Please provide a valid Email'
-            }
-        }
+                msg: 'Please provide a valid Email',
+            },
+        },
+        unique: true,
     },
     phoneNumber: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'Phone Number cannot be empty'
+                msg: 'Phone Number cannot be empty',
             },
             notEmpty: {
-                msg: 'Please provide a Phone Number'
-            }
-        }
+                msg: 'Please provide a Phone Number',
+            },
+        },
     },
     password: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: false,
         validate: {
             notNull: {
-                msg: 'Password cannot be empty'
+                msg: 'Password cannot be empty',
             },
             notEmpty: {
-                msg: 'Please provide a password'
-            }
-        }
+                msg: 'Please provide a password',
+            },
+        },
     },
     avatar: {
         type: sequelize_1.DataTypes.STRING,
         allowNull: true,
+        defaultValue: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQOA8-aNtpaUiEp2YmB9QCAAtGGjvhRtGZ1Fb_-Mcc-XWPPNF0moeotjN_R-hYjv9PJDP4&usqp=CAU',
     },
     isVerified: {
         type: sequelize_1.DataTypes.BOOLEAN,
@@ -97,5 +100,5 @@ UserInstance.init({
     },
 }, {
     sequelize: database_config_1.default,
-    tableName: 'Users'
+    tableName: 'Users',
 });
