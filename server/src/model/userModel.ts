@@ -1,15 +1,15 @@
 import { DataTypes, Model} from 'sequelize'
 import db from '../config/database.config'
 
-interface UserAttribute {
+export interface UserAttribute {
     id: string,
-    firstname: string,
-    lastname: string,
-    username: string,
-    email: string,
-    phoneNumber: string,
-    password: string,
-    avatar: string,
+    firstname: string;
+    lastname: string;
+    username: string;
+    email: string;
+    phoneNumber: string;
+    password: string;
+    avatar: string;
     isVerified: boolean
 }
 

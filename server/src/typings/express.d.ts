@@ -4,6 +4,6 @@ declare namespace Express {
             id: string;
             exp: number;
             iat: number;
-        };
+        } | unknown;
     }
 }
