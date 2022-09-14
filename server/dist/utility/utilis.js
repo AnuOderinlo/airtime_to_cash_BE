@@ -9,7 +9,7 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.loginUserSchema = joi_1.default.object().keys({
     email: joi_1.default.string().trim().lowercase(),
     username: joi_1.default.string().trim().lowercase(),
-    password: joi_1.default.string().required()
+    password: joi_1.default.string().required(),
 });
 const generateToken = (user) => {
     const passPhrase = process.env.JWT_SECRET;
@@ -48,7 +48,7 @@ exports.options = {
     abortEarly: false,
     errors: {
         wrap: {
-            label: "",
+            label: '',
         },
     },
 };
