@@ -237,30 +237,6 @@ export async function createUser(req: Request, res: Response, next: NextFunction
                 Message: 'Unable to create a user',
             });
         }
-        const passwordHash = await bcrypt.hash(req.body.password, 8);
-        const ConfirmPasswordHash = await bcrypt.hash(req.body.confirm_password, 8);
-        const userData = {
-            id,
-            firstname: req.body.firstname,
-            lastname: req.body.lastname,
-            username: req.body.username,
-            email: req.body.email,
-            phoneNumber: req.body.phoneNumber,
-            password: passwordHash,
-            confirm_password: ConfirmPasswordHash,
-            avatar: req.body.avatar,
-            isVerified: req.body.isVerified,
-        };
-
-        const userDetails = await UserInstance.create(userData);
-
-        const token = generateToken({ id });
-        res.status(201).json({
-            status: 'Success',
-            token,
-            message: 'Successfully created a user',
-            data: userDetails,
-        });
     } catch (error) {
         console.log(error);
 
