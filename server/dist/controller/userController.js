@@ -24,30 +24,30 @@ async function loginUser(req, res) {
         }
         let User;
         if (username) {
-            User = await userModel_1.UserInstance.findOne({ where: { username: username } });
+            User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
         }
         else if (email) {
-            User = await userModel_1.UserInstance.findOne({ where: { email: email } });
+            User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
         }
         else {
-            return res.json({ message: "Username or email is required" });
+            return res.json({ message: 'Username or email is required' });
         }
         if (!User) {
-            return res.json({ message: "Username or email is required" });
+            return res.json({ message: 'Username or email is required' });
         }
         const id = User.id;
         const token = (0, utilis_1.generateToken)({ id });
         const validUser = await bcryptjs_1.default.compare(password, User.password);
         if (!validUser) {
-            return res.status(401).json({ message: "Password do not match" });
+            return res.status(401).json({ message: 'Password do not match' });
         }
-        return res.status(200).json({ message: "Login successful", token, User });
+        return res.status(200).json({ message: 'Login successful', token, User });
     }
     catch (err) {
         console.log(err);
         return res.status(500).json({
             message: 'failed to login user',
-            route: '/login'
+            route: '/login',
         });
     }
 }
@@ -59,21 +59,26 @@ async function verifyUser(req, res, next) {
         if (!id) {
             res.status(401).json({
                 Error: 'Verification failed',
-                token
+                token,
             });
         }
         else {
+            const user = await userModel_1.UserInstance.findOne({ where: { id } });
+            const updateVerify = await user?.update({
+                isVerified: true,
+            });
             res.status(200).json({
-                msg: "Successfully verified new user",
+                msg: 'Successfully verified new user',
                 status: 1,
-                id
+                id,
+                // updateVerify,
             });
         }
     }
     catch (error) {
         res.status(500).json({
-            msg: "failed to verify user",
-            route: "/verify",
+            msg: 'failed to verify user',
+            route: '/verify',
             error: error,
         });
     }
@@ -85,44 +90,44 @@ async function sendEmail(req, res, next) {
         const template = req.body.template;
         const transactionDetails = req.body.transactionDetails;
         if (username && template) {
-            const User = await userModel_1.UserInstance.findOne({
-                where: { username: username }
-            });
+            const User = (await userModel_1.UserInstance.findOne({
+                where: { username: username },
+            }));
             const { email, id } = User;
-            let html = "";
+            let html = '';
             let fromUser = process.env.FROM;
-            let subject = "";
-            const token = jsonwebtoken_1.default.sign({ id }, jwtSecret, { expiresIn: "30mins" });
+            let subject = '';
+            const token = jsonwebtoken_1.default.sign({ id }, jwtSecret, { expiresIn: '30mins' });
             if (template === 'transaction') {
                 html = (0, TransactionTemplate_1.TransactionEmail)(transactionDetails);
-                subject = "Your transaction details";
+                subject = 'Your transaction details';
             }
             else if (template === 'verification') {
                 html = (0, VerificationTemplate_1.emailVerificationView)(token);
-                subject = "Please confirm your email";
+                subject = 'Please confirm your email';
             }
             else {
                 res.status(400).json({
-                    error: "Invalid template type"
+                    error: 'Invalid template type',
                 });
             }
             await SendMail_1.default.sendEmail(fromUser, email, subject, html);
             res.status(201).json({
-                msg: "Successfully sent email",
+                msg: 'Successfully sent email',
                 status: 1,
-                email: email
+                email: email,
             });
         }
         else {
             res.status(400).json({
-                error: "Username and template required"
+                error: 'Username and template required',
             });
         }
     }
     catch (error) {
         res.status(500).json({
-            msg: "failed to send email",
-            route: "/sendmail",
+            msg: 'failed to send email',
+            route: '/sendmail',
             error: error,
         });
     }
@@ -178,6 +183,9 @@ async function createUser(req, res, next) {
         const userDetails = await userModel_1.UserInstance.create(userData);
         // const id = userDetails?.id;
         const token = (0, utilis_1.generateToken)({ id });
+        let html = '';
+        html = (0, VerificationTemplate_1.emailVerificationView)(token);
+        await SendMail_1.default.sendEmail(fromUser, req.body.email, 'Verify Email', html);
         res.status(201).json({
             status: 'Success',
             token,
@@ -201,28 +209,28 @@ async function updateUser(req, res, next) {
         const { firstname, lastname, avatar, phoneNumber } = req.body;
         if (userDetails) {
             const userUpdate = await userDetails.update({
-                firstname: firstname || userDetails.getDataValue("firstname"),
-                lastname: lastname || userDetails.getDataValue("lastname"),
-                avatar: avatar || userDetails.getDataValue("avatar"),
-                phoneNumber: phoneNumber || userDetails.getDataValue("phoneNumber"),
+                firstname: firstname || userDetails.getDataValue('firstname'),
+                lastname: lastname || userDetails.getDataValue('lastname'),
+                avatar: avatar || userDetails.getDataValue('avatar'),
+                phoneNumber: phoneNumber || userDetails.getDataValue('phoneNumber'),
             });
             res.status(201).json({
-                status: "Success",
-                message: "Successfully updated a user",
+                status: 'Success',
+                message: 'Successfully updated a user',
                 data: userUpdate,
             });
         }
         else {
             res.json({
-                status: "failed",
-                message: "User not found",
+                status: 'failed',
+                message: 'User not found',
             });
         }
     }
     catch (error) {
         res.status(500).json({
-            status: "Failed",
-            Message: "Unable to update user",
+            status: 'Failed',
+            Message: 'Unable to update user',
         });
     }
 }
