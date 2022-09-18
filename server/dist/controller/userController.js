@@ -23,14 +23,20 @@ async function loginUser(req, res) {
             return res.status(400).json({ Error: validationResult.error.details[0].message });
         }
         let User;
-        if (username) {
-            User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
-        }
-        else if (email) {
-            User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
+        let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
+        if (verifiedUser.length > 0) {
+            if (username) {
+                User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
+            }
+            else if (email) {
+                User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
+            }
+            else {
+                return res.json({ message: 'Username or email is required' });
+            }
         }
         else {
-            return res.json({ message: 'Username or email is required' });
+            return res.json({ message: 'Email not verified, please verify your email' });
         }
         if (!User) {
             return res.json({ message: 'Username or email is required' });
@@ -167,7 +173,7 @@ async function createUser(req, res, next) {
             });
         }
         const passwordHash = await bcryptjs_1.default.hash(req.body.password, 8);
-        const ConfirmPasswordHash = await bcryptjs_1.default.hash(req.body.confirm_password, 8);
+        const ConfirmPasswordHash = await bcryptjs_1.default.hash(req.body.confirmPassword, 8);
         const userData = {
             id,
             firstname: req.body.firstname,
@@ -176,7 +182,7 @@ async function createUser(req, res, next) {
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: passwordHash,
-            confirm_password: ConfirmPasswordHash,
+            confirmPassword: ConfirmPasswordHash,
             avatar: req.body.avatar,
             isVerified: req.body.isVerified,
         };
