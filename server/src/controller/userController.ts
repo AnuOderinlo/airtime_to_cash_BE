@@ -28,34 +28,34 @@ export async function loginUser(req: Request, res: Response) {
     }
 
     let User = null;
-    const verifiedUser = await UserInstance.findOne({ where: { isVerified: true, email: email } });
+    let id = null;
+    let validUser = null;
+    let verifiedUser = null;
+    let verifiedUsername = null;
 
-    console.log({ verified: verifiedUser })
+    if (email) {
+      verifiedUser = await UserInstance.findOne({ where: { isVerified: true, email: email } }) as unknown as { [key: string]: string };
+    } else if (username) {
+      verifiedUsername = await UserInstance.findOne({ where: { isVerified: true, username: username } }) as unknown as { [key: string]: string };
+
+    }
 
     if (verifiedUser) {
-      if (username) {
-        User = (await UserInstance.findOne({ where: { username: username } })) as unknown as { [key: string]: string };
-      } else if (email) {
-        User = (await UserInstance.findOne({ where: { email: email } })) as unknown as { [key: string]: string };
-      } else {
-        return res.json({ message: 'Username or email is required' });
-      }
-    } else {
-      return res.json({ message: 'Email not verified, please verify your email' });
+      id = verifiedUser.id;
+      User = verifiedUser
+    } else if (verifiedUsername) {
+      id = verifiedUsername.id;
+      User = verifiedUsername
     }
-
-    if (!User) {
-      return res.json({ message: 'Username or email is required' });
-    }
-
-    const id = User.id;
 
     const token = generateToken({ id });
 
-    const validUser = await bcrypt.compare(password, User.password);
+    if (User && User.password) {
+      validUser = await bcrypt.compare(password, User.password);
+    }
 
     if (!validUser) {
-      return res.status(401).json({ message: 'Password do not match' });
+      return res.status(401).json({ message: 'Invalid login details' });
     }
 
     return res.status(200).json({ message: 'Login successful', token, User });
