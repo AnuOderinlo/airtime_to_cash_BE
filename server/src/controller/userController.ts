@@ -29,21 +29,22 @@ export async function loginUser(req: Request, res: Response) {
 
     let User;
     let verifiedUser = await UserInstance.findAll({ where: { isVerified: true, email: email } });
+    let verifiedUsername = await UserInstance.findAll({ where: { isVerified: true, username: username } });
 
-    if (verifiedUser.length > 0) {
+    if (verifiedUser.length > 0 || verifiedUsername.length > 0) {
       if (username) {
         User = (await UserInstance.findOne({ where: { username: username } })) as unknown as { [key: string]: string };
       } else if (email) {
         User = (await UserInstance.findOne({ where: { email: email } })) as unknown as { [key: string]: string };
       } else {
-        return res.json({ message: 'Username or email is required' });
+        return res.status(401).json({ message: 'Username or email is required' });
       }
     } else {
-      return res.json({ message: 'Email not verified, please verify your email' });
+      return res.status(401).json({ message: 'Email not verified, please verify your email' });
     }
 
     if (!User) {
-      return res.json({ message: 'Username or email is required' });
+      return res.status(401).json({ message: 'Username or email is required' });
     }
 
     const id = User.id;

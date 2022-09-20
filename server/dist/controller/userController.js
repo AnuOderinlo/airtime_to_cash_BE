@@ -24,7 +24,8 @@ async function loginUser(req, res) {
         }
         let User;
         let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
-        if (verifiedUser.length > 0) {
+        let verifiedUsername = await userModel_1.UserInstance.findAll({ where: { isVerified: true, username: username } });
+        if (verifiedUser.length > 0 || verifiedUsername.length > 0) {
             if (username) {
                 User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
             }
@@ -32,14 +33,14 @@ async function loginUser(req, res) {
                 User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
             }
             else {
-                return res.json({ message: 'Username or email is required' });
+                return res.status(401).json({ message: 'Username or email is required' });
             }
         }
         else {
-            return res.json({ message: 'Email not verified, please verify your email' });
+            return res.status(401).json({ message: 'Email not verified, please verify your email' });
         }
         if (!User) {
-            return res.json({ message: 'Username or email is required' });
+            return res.status(401).json({ message: 'Username or email is required' });
         }
         const id = User.id;
         const token = (0, utilis_1.generateToken)({ id });
