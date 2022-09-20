@@ -34,18 +34,23 @@ export async function loginUser(req: Request, res: Response) {
     let verifiedUsername = null;
 
     if (email) {
-      verifiedUser = await UserInstance.findOne({ where: { isVerified: true, email: email } }) as unknown as { [key: string]: string };
+      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email } })) as unknown as {
+        [key: string]: string;
+      };
     } else if (username) {
-      verifiedUsername = await UserInstance.findOne({ where: { isVerified: true, username: username } }) as unknown as { [key: string]: string };
-
+      verifiedUsername = (await UserInstance.findOne({
+        where: { isVerified: true, username: username },
+      })) as unknown as { [key: string]: string };
     }
 
     if (verifiedUser) {
       id = verifiedUser.id;
-      User = verifiedUser
+      User = verifiedUser;
     } else if (verifiedUsername) {
       id = verifiedUsername.id;
-      User = verifiedUsername
+      User = verifiedUsername;
+    } else {
+      return res.status(401).json({ message: 'Email not verified' });
     }
 
     const token = generateToken({ id });
@@ -256,7 +261,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     res.status(500).json({
       status: 'Failed',
       Message: 'Unable to update user',
-      error
+      error,
     });
   }
 }
