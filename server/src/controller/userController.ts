@@ -27,10 +27,12 @@ export async function loginUser(req: Request, res: Response) {
       return res.status(400).json({ Error: validationResult.error.details[0].message });
     }
 
-    let User;
-    let verifiedUser = await UserInstance.findAll({ where: { isVerified: true, email: email } });
+    let User = null;
+    const verifiedUser = await UserInstance.findOne({ where: { isVerified: true, email: email } });
 
-    if (verifiedUser.length > 0) {
+    console.log({ verified: verifiedUser })
+
+    if (verifiedUser) {
       if (username) {
         User = (await UserInstance.findOne({ where: { username: username } })) as unknown as { [key: string]: string };
       } else if (email) {
@@ -254,6 +256,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     res.status(500).json({
       status: 'Failed',
       Message: 'Unable to update user',
+      error
     });
   }
 }

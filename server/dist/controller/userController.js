@@ -22,9 +22,10 @@ async function loginUser(req, res) {
         if (validationResult.error) {
             return res.status(400).json({ Error: validationResult.error.details[0].message });
         }
-        let User;
-        let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
-        if (verifiedUser.length > 0) {
+        let User = null;
+        const verifiedUser = await userModel_1.UserInstance.findOne({ where: { isVerified: true, email: email } });
+        console.log({ verified: verifiedUser });
+        if (verifiedUser) {
             if (username) {
                 User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
             }
@@ -238,6 +239,7 @@ async function updateUser(req, res, next) {
         res.status(500).json({
             status: 'Failed',
             Message: 'Unable to update user',
+            error
         });
     }
 }
