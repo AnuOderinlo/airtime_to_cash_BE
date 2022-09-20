@@ -24,7 +24,8 @@ async function loginUser(req, res) {
         }
         let User;
         let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
-        if (verifiedUser.length > 0) {
+        let verifiedUsername = await userModel_1.UserInstance.findAll({ where: { isVerified: true, username: username } });
+        if (verifiedUser.length > 0 || verifiedUsername.length > 0) {
             if (username) {
                 User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
             }

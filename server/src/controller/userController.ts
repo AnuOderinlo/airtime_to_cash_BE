@@ -29,8 +29,9 @@ export async function loginUser(req: Request, res: Response) {
 
     let User;
     let verifiedUser = await UserInstance.findAll({ where: { isVerified: true, email: email } });
+    let verifiedUsername = await UserInstance.findAll({ where: { isVerified: true, username: username } });
 
-    if (verifiedUser.length > 0) {
+    if (verifiedUser.length > 0 || verifiedUsername.length > 0) {
       if (username) {
         User = (await UserInstance.findOne({ where: { username: username } })) as unknown as { [key: string]: string };
       } else if (email) {
