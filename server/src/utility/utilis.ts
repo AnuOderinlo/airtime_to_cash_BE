@@ -42,16 +42,6 @@ export const changePasswordSchema = Joi.object()
   })
   .with('password', 'confirmPassword');
 
-export const changePasswordSchema = Joi.object()
-  .keys({
-    password: Joi.string().required(),
-    confirmPassword: Joi.any()
-      .equal(Joi.ref('password'))
-      .required()
-      .label('Confirm password')
-      .messages({ 'any.only': '{{#label}} does not match' }),
-  })
-  .with('password', 'confirmPassword');
 
 export const options = {
   abortEarly: false,
