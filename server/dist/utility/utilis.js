@@ -44,16 +44,6 @@ exports.changePasswordSchema = joi_1.default.object()
         .messages({ 'any.only': '{{#label}} does not match' }),
 })
     .with('password', 'confirmPassword');
-exports.changePasswordSchema = joi_1.default.object()
-    .keys({
-    password: joi_1.default.string().required(),
-    confirmPassword: joi_1.default.any()
-        .equal(joi_1.default.ref('password'))
-        .required()
-        .label('Confirm password')
-        .messages({ 'any.only': '{{#label}} does not match' }),
-})
-    .with('password', 'confirmPassword');
 exports.options = {
     abortEarly: false,
     errors: {
