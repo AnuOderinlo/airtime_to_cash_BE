@@ -230,13 +230,14 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
   try {
     const { id } = req.params;
     const userDetails = await UserInstance.findOne({ where: { id } });
-    const { firstname, lastname, avatar, phoneNumber } = req.body;
+    const { firstname, lastname, avatar, username, phoneNumber } = req.body;
     if (userDetails) {
       const userUpdate = await userDetails.update({
         firstname: firstname || userDetails.getDataValue('firstname'),
         lastname: lastname || userDetails.getDataValue('lastname'),
         avatar: avatar || userDetails.getDataValue('avatar'),
         phoneNumber: phoneNumber || userDetails.getDataValue('phoneNumber'),
+        username: username || userDetails.getDataValue('username'),
       });
       res.status(201).json({
         status: 'Success',
