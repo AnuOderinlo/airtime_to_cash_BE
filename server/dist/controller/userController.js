@@ -22,31 +22,31 @@ async function loginUser(req, res) {
         if (validationResult.error) {
             return res.status(400).json({ Error: validationResult.error.details[0].message });
         }
-        let User;
-        let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
-        let verifiedUsername = await userModel_1.UserInstance.findAll({ where: { isVerified: true, username: username } });
-        if (verifiedUser.length > 0 || verifiedUsername.length > 0) {
-            if (username) {
-                User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
-            }
-            else if (email) {
-                User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
-            }
-            else {
-                return res.status(401).json({ message: 'Username or email is required' });
-            }
+        let User = null;
+        let id = null;
+        let validUser = null;
+        let verifiedUser = null;
+        let verifiedUsername = null;
+        if (email) {
+            verifiedUser = await userModel_1.UserInstance.findOne({ where: { isVerified: true, email: email } });
         }
-        else {
-            return res.status(401).json({ message: 'Email not verified, please verify your email' });
+        else if (username) {
+            verifiedUsername = await userModel_1.UserInstance.findOne({ where: { isVerified: true, username: username } });
         }
-        if (!User) {
-            return res.status(401).json({ message: 'Username or email is required' });
+        if (verifiedUser) {
+            id = verifiedUser.id;
+            User = verifiedUser;
         }
-        const id = User.id;
+        else if (verifiedUsername) {
+            id = verifiedUsername.id;
+            User = verifiedUsername;
+        }
         const token = (0, utilis_1.generateToken)({ id });
-        const validUser = await bcryptjs_1.default.compare(password, User.password);
+        if (User && User.password) {
+            validUser = await bcryptjs_1.default.compare(password, User.password);
+        }
         if (!validUser) {
-            return res.status(401).json({ message: 'Password do not match' });
+            return res.status(401).json({ message: 'Invalid login details' });
         }
         return res.status(200).json({ message: 'Login successful', token, User });
     }
@@ -239,6 +239,7 @@ async function updateUser(req, res, next) {
         res.status(500).json({
             status: 'Failed',
             Message: 'Unable to update user',
+            error
         });
     }
 }
