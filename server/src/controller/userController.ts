@@ -28,14 +28,6 @@ export async function loginUser(req: Request, res: Response) {
     }
 
     let User;
-<<<<<<< HEAD
-    if (username) {
-      User = (await UserInstance.findOne({ where: { username: username } })) as unknown as { [key: string]: string };
-    } else if (email) {
-      User = (await UserInstance.findOne({ where: { email: email } })) as unknown as { [key: string]: string };
-    } else {
-      return res.json({ message: 'Username or email is required' });
-=======
     let verifiedUser = await UserInstance.findAll({ where: { isVerified: true, email: email } });
 
     if (verifiedUser.length > 0) {
@@ -48,7 +40,6 @@ export async function loginUser(req: Request, res: Response) {
       }
     } else {
       return res.json({ message: 'Email not verified, please verify your email' });
->>>>>>> 02308f01ba231abb1d8ceab74f8a965d9e02ec63
     }
 
     if (!User) {

@@ -23,14 +23,20 @@ async function loginUser(req, res) {
             return res.status(400).json({ Error: validationResult.error.details[0].message });
         }
         let User;
-        if (username) {
-            User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
-        }
-        else if (email) {
-            User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
+        let verifiedUser = await userModel_1.UserInstance.findAll({ where: { isVerified: true, email: email } });
+        if (verifiedUser.length > 0) {
+            if (username) {
+                User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
+            }
+            else if (email) {
+                User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
+            }
+            else {
+                return res.json({ message: 'Username or email is required' });
+            }
         }
         else {
-            return res.json({ message: 'Username or email is required' });
+            return res.json({ message: 'Email not verified, please verify your email' });
         }
         if (!User) {
             return res.json({ message: 'Username or email is required' });
