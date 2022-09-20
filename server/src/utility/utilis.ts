@@ -27,9 +27,20 @@ export const registerUserSchema = Joi.object()
       .required(),
     avatar: Joi.string(),
     isVerified: Joi.boolean(),
-    confirm_password: Joi.ref('password'),
+    confirmPassword: Joi.ref('password'),
   })
-  .with('password', 'confirm_password');
+  .with('password', 'confirmPassword');
+
+export const changePasswordSchema = Joi.object()
+  .keys({
+    password: Joi.string().required(),
+    confirmPassword: Joi.any()
+      .equal(Joi.ref('password'))
+      .required()
+      .label('Confirm password')
+      .messages({ 'any.only': '{{#label}} does not match' }),
+  })
+  .with('password', 'confirmPassword');
 
 export const changePasswordSchema = Joi.object()
   .keys({
