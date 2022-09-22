@@ -33,7 +33,7 @@ describe('it should test all apis', () => {
 
   //Login with email
   it('should login a user with email', async () => {
-    const response = await request.post('/user/login').send({
+    const response = await request.post('/users/login').send({
       email: 'jane12@example.com',
       password: '12345',
     });
@@ -44,7 +44,7 @@ describe('it should test all apis', () => {
   });
   // Login with username
   it('should login a user with email', async () => {
-    const response = await request.post('/user/login').send({
+    const response = await request.post('/users/login').send({
       username: 'jane12',
       password: '12345',
     });

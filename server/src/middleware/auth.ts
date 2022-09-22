@@ -28,7 +28,6 @@ export async function auth(req: Request, res: Response, next: NextFunction) {
     const usertype = req.cookies.usertype as string;
     let user;
     switch (usertype) {
-   
       case "user":
         user = await UserInstance.findByPk(id);
         if (!user) {

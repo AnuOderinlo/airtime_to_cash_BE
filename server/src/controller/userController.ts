@@ -39,20 +39,17 @@ export async function loginUser(req: Request, res: Response) {
       return res.json({ message: "Username or email is required" })
     }
 
+
     if (!User) {
       return res.json({ message: "Username or email is required" })
     }
-
     const id = User.id;
-
     const token = generateToken({ id });
-
     const validUser = await bcrypt.compare(password, User.password)
 
     if (!validUser) {
       return res.status(401).json({ message: "Password do not match" })
     }
-
     return res.status(200).json({ message: "Login successful", token, User })
 
   } catch (err) {
@@ -64,7 +61,6 @@ export async function loginUser(req: Request, res: Response) {
   }
 }
 
-
 export async function verifyUser(
   req: Request,
   res: Response,
@@ -72,7 +68,6 @@ export async function verifyUser(
 ) {
 
   try {
-
     const token = req.params.token
     const { id } = jwt.verify(token, jwtSecret) as jwtPayload;
 
@@ -88,7 +83,6 @@ export async function verifyUser(
         id
       });
     }
-
   } catch (error) {
     res.status(500).json({
       msg: "failed to verify user",
@@ -104,9 +98,8 @@ export async function sendEmail(
   next: NextFunction
 ) {
 
+
   try {
-
-
     const username = req.body.username;
     const template = req.body.template;
     const transactionDetails = req.body.transactionDetails
