@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 
+
 export const loginUserSchema = Joi.object().keys({
   email: Joi.string().trim().lowercase(),
   username: Joi.string().trim().lowercase(),
@@ -27,9 +28,9 @@ export const registerUserSchema = Joi.object()
       .required(),
     avatar: Joi.string(),
     isVerified: Joi.boolean(),
-    confirm_password: Joi.ref('password'),
+    confirmPassword: Joi.ref('password'),
   })
-  .with('password', 'confirm_password');
+  .with('password', 'confirmPassword');
 
 export const changePasswordSchema = Joi.object()
   .keys({
@@ -42,6 +43,7 @@ export const changePasswordSchema = Joi.object()
   })
   .with('password', 'confirmPassword');
 
+
 export const options = {
   abortEarly: false,
   errors: {
@@ -50,3 +52,11 @@ export const options = {
     },
   },
 };
+
+export const createAccountSchema = Joi.object().keys({
+  bankName: Joi.string().trim().required(),
+  accountNumber: Joi.string().trim().required().pattern(/^[0-9]+$/).length(10),
+  accountName: Joi.string().trim().required(),
+  // userId: Joi.string().trim().required(),
+  walletBalance: Joi.number().min(0).required(),
+});

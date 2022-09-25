@@ -22,7 +22,7 @@ describe('it should test all apis', () => {
       username: 'janeDanny12',
       phoneNumber: '07971192932',
       password: '12345',
-      confirm_password: '12345',
+      confirmPassword: '12345',
     });
     expect(response.status).toBe(201);
     expect(response.body.message).toBe('Successfully created a user');
@@ -42,6 +42,7 @@ describe('it should test all apis', () => {
     expect(response.body).toHaveProperty('token');
     expect(response.body).toHaveProperty('User');
   });
+  
   // Login with username
   it('should login a user with email', async () => {
     const response = await request.post('/users/login').send({
