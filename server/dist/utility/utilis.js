@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.options = exports.changePasswordSchema = exports.registerUserSchema = exports.generateToken = exports.loginUserSchema = void 0;
+exports.createAccountSchema = exports.options = exports.changePasswordSchema = exports.registerUserSchema = exports.generateToken = exports.loginUserSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.loginUserSchema = joi_1.default.object().keys({
@@ -52,3 +52,10 @@ exports.options = {
         },
     },
 };
+exports.createAccountSchema = joi_1.default.object().keys({
+    bankName: joi_1.default.string().trim().required(),
+    accountNumber: joi_1.default.string().trim().required().pattern(/^[0-9]+$/).length(10),
+    accountName: joi_1.default.string().trim().required(),
+    walletBalance: joi_1.default.number().min(0),
+    userId: joi_1.default.string().trim(),
+});

@@ -9,9 +9,9 @@ router.get('/', function (req, res, next) {
 
 router.post('/sendmail', sendEmail)
 router.post('/users', createUser);
-router.patch('/users/:id', updateUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
+router.patch('/users/:id', updateUser);
 router.post('/change-password/:id', changePassword);
 router.get('/verify/:token', verifyUser);
 
