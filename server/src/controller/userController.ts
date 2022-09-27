@@ -87,7 +87,6 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
         msg: 'Successfully verified new user',
         status: 1,
         id,
-        // updateVerify,
       });
     }
   } catch (error) {
@@ -157,7 +156,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
     const validationResult = registerUserSchema.validate(req.body, options);
     if (validationResult.error) {
       return res.status(400).json({
-        Error: validationResult.error.details[0].message,
+        error: validationResult.error.details[0].message,
       });
     }
     const duplicateEmail = await UserInstance.findOne({
@@ -223,7 +222,8 @@ export async function createUser(req: Request, res: Response, next: NextFunction
 
     res.status(500).json({
       status: 'Failed',
-      Message: 'Unable to create a user',
+      message: 'Unable to create a user',
+      error
     });
   }
 }
