@@ -22,24 +22,31 @@ async function loginUser(req, res) {
         if (validationResult.error) {
             return res.status(400).json({ Error: validationResult.error.details[0].message });
         }
-        let User;
-        if (username) {
-            User = (await userModel_1.UserInstance.findOne({ where: { username: username } }));
+        let User = null;
+        let id = null;
+        let validUser = null;
+        let verifiedUser = null;
+        let verifiedUsername = null;
+        if (email) {
+            verifiedUser = await userModel_1.UserInstance.findOne({ where: { isVerified: true, email: email } });
         }
-        else if (email) {
-            User = (await userModel_1.UserInstance.findOne({ where: { email: email } }));
+        else if (username) {
+            verifiedUsername = await userModel_1.UserInstance.findOne({ where: { isVerified: true, username: username } });
         }
-        else {
-            return res.json({ message: 'Username or email is required' });
+        if (verifiedUser) {
+            id = verifiedUser.id;
+            User = verifiedUser;
         }
-        if (!User) {
-            return res.json({ message: 'Username or email is required' });
+        else if (verifiedUsername) {
+            id = verifiedUsername.id;
+            User = verifiedUsername;
         }
-        const id = User.id;
         const token = (0, utilis_1.generateToken)({ id });
-        const validUser = await bcryptjs_1.default.compare(password, User.password);
+        if (User && User.password) {
+            validUser = await bcryptjs_1.default.compare(password, User.password);
+        }
         if (!validUser) {
-            return res.status(401).json({ message: 'Password do not match' });
+            return res.status(401).json({ message: 'Invalid login details' });
         }
         return res.status(200).json({ message: 'Login successful', token, User });
     }
@@ -167,7 +174,7 @@ async function createUser(req, res, next) {
             });
         }
         const passwordHash = await bcryptjs_1.default.hash(req.body.password, 8);
-        const ConfirmPasswordHash = await bcryptjs_1.default.hash(req.body.confirm_password, 8);
+        const ConfirmPasswordHash = await bcryptjs_1.default.hash(req.body.confirmPassword, 8);
         const userData = {
             id,
             firstname: req.body.firstname,
@@ -176,7 +183,7 @@ async function createUser(req, res, next) {
             email: req.body.email,
             phoneNumber: req.body.phoneNumber,
             password: passwordHash,
-            confirm_password: ConfirmPasswordHash,
+            confirmPassword: ConfirmPasswordHash,
             avatar: req.body.avatar,
             isVerified: req.body.isVerified,
         };
@@ -206,13 +213,14 @@ async function updateUser(req, res, next) {
     try {
         const { id } = req.params;
         const userDetails = await userModel_1.UserInstance.findOne({ where: { id } });
-        const { firstname, lastname, avatar, phoneNumber } = req.body;
+        const { firstname, lastname, avatar, username, phoneNumber } = req.body;
         if (userDetails) {
             const userUpdate = await userDetails.update({
                 firstname: firstname || userDetails.getDataValue('firstname'),
                 lastname: lastname || userDetails.getDataValue('lastname'),
                 avatar: avatar || userDetails.getDataValue('avatar'),
                 phoneNumber: phoneNumber || userDetails.getDataValue('phoneNumber'),
+                username: username || userDetails.getDataValue('username'),
             });
             res.status(201).json({
                 status: 'Success',
@@ -231,6 +239,7 @@ async function updateUser(req, res, next) {
         res.status(500).json({
             status: 'Failed',
             Message: 'Unable to update user',
+            error
         });
     }
 }

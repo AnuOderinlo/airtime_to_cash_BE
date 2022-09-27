@@ -31,9 +31,9 @@ exports.registerUserSchema = joi_1.default.object()
         .required(),
     avatar: joi_1.default.string(),
     isVerified: joi_1.default.boolean(),
-    confirm_password: joi_1.default.ref('password'),
+    confirmPassword: joi_1.default.ref('password'),
 })
-    .with('password', 'confirm_password');
+    .with('password', 'confirmPassword');
 exports.changePasswordSchema = joi_1.default.object()
     .keys({
     password: joi_1.default.string().required(),
