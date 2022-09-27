@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
 const auth_1 = require("../middleware/auth");
 const account_1 = require("../controller/account");
-router.post('/createaccount', auth_1.auth, account_1.CreateAccount);
+router.post('/create', auth_1.auth, account_1.createAccount);
 router.get('/getaccount', auth_1.auth, account_1.getBankAccounts);
 router.get('/getuseraccount/:id', auth_1.auth, account_1.getUserAccount);
 router.delete('/deleteaccount', auth_1.auth, account_1.deleteBankAccount);

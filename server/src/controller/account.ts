@@ -3,7 +3,7 @@ import { v4 as uuidv4, validate } from 'uuid';
 import { AccountInstance } from '../model/accounts';
 import { createAccountSchema, options } from '../utility/utilis';
 
-export async function CreateAccount(
+export async function createAccount(
     req: Request|any,
     res: Response,
     next: NextFunction
@@ -11,13 +11,13 @@ export async function CreateAccount(
         const id = uuidv4();
         try {
          const userID = req.user.id;
-         const ValidateAccount = await createAccountSchema.validateAsync(req.body, options);
-         if (ValidateAccount.error) {
-                return res.status(400).json({
-                    status: 'error',
-                    message: ValidateAccount.error.details[0].message,
-                });
-         }
+        //  const ValidateAccount = await createAccountSchema.validateAsync(req.body, options);
+        //  if (ValidateAccount.error) {
+        //         return res.status(400).json({
+        //             status: 'error',
+        //             message: ValidateAccount.error.details[0].message,
+        //         });
+        //  } 
          const duplicateAccount = await AccountInstance.findOne({
                 where: { accountNumber: req.body.accountNumber },
          })
