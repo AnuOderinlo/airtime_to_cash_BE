@@ -3,17 +3,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUserAccount = exports.deleteBankAccount = exports.getBankAccounts = exports.createAccount = void 0;
 const uuid_1 = require("uuid");
 const accounts_1 = require("../model/accounts");
+const utilis_1 = require("../utility/utilis");
+const userModel_1 = require("../model/userModel");
+// import { TransactionInstance } from '../model/transactions';
 async function createAccount(req, res, next) {
     const id = (0, uuid_1.v4)();
     try {
+        const order = await accounts_1.AccountInstance.findByPk(req.params.id, {
+            include: [
+                {
+                    model: userModel_1.UserInstance,
+                    as: "customer",
+                    attributes: ["bankName", "accountName", "accountNumber"]
+                }
+            ]
+        });
+        if (!order) {
+            return res.status(404).json({
+                message: "Account not found"
+            });
+        }
         const userID = req.user.id;
-        //  const ValidateAccount = await createAccountSchema.validateAsync(req.body, options);
-        //  if (ValidateAccount.error) {
-        //         return res.status(400).json({
-        //             status: 'error',
-        //             message: ValidateAccount.error.details[0].message,
-        //         });
-        //  } 
+        const ValidateAccount = await utilis_1.createAccountSchema.validate(req.body, utilis_1.options);
+        if (ValidateAccount.error) {
+            return res.status(400).json({
+                status: 'error',
+                message: ValidateAccount.error.details[0].message,
+            });
+        }
         const duplicateAccount = await accounts_1.AccountInstance.findOne({
             where: { accountNumber: req.body.accountNumber },
         });

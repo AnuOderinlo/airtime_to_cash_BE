@@ -1,5 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import db from '../config/database.config';
+import { UserInstance } from "./userModel";
 interface AccountAttribute {
     id: string;
     bankName: string;
@@ -8,7 +9,10 @@ interface AccountAttribute {
     userId: string;
     walletBalance: number;
 }
-export class AccountInstance extends Model<AccountAttribute> {}
+export class AccountInstance extends Model<AccountAttribute> {
+  User?: UserInstance[];
+
+}
 AccountInstance.init(
     {
     id: {
@@ -46,3 +50,13 @@ AccountInstance.init(
         tableName: 'accountTable'
     }
 );
+
+UserInstance.hasMany(AccountInstance, {
+    foreignKey: "placedBy",
+    as: "orders"
+  });
+  
+  AccountInstance.belongsTo(UserInstance, {
+    foreignKey: "placedBy",
+    as: "customer"
+  });

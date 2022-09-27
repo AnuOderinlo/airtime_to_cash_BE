@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4, validate } from 'uuid';
 import { AccountInstance } from '../model/accounts';
 import { createAccountSchema, options } from '../utility/utilis';
+import { UserInstance } from '../model/userModel';
+// import { TransactionInstance } from '../model/transactions';
 
 export async function createAccount(
     req: Request|any,
@@ -10,14 +12,30 @@ export async function createAccount(
     ) {
         const id = uuidv4();
         try {
+
+            const order = await AccountInstance.findByPk(req.params.id, {
+                include: [
+                  {
+                    model: UserInstance,
+                    as: "customer",
+                    attributes: ["bankName", "accountName", "accountNumber"]
+                  }
+                ]
+              });
+              if (!order) {
+                return res.status(404).json({
+                  message: "Account not found"
+                });
+              }
+
          const userID = req.user.id;
-        //  const ValidateAccount = await createAccountSchema.validateAsync(req.body, options);
-        //  if (ValidateAccount.error) {
-        //         return res.status(400).json({
-        //             status: 'error',
-        //             message: ValidateAccount.error.details[0].message,
-        //         });
-        //  } 
+         const ValidateAccount = await createAccountSchema.validate(req.body, options);
+         if (ValidateAccount.error) {
+                return res.status(400).json({
+                    status: 'error',
+                    message: ValidateAccount.error.details[0].message,
+                });
+         } 
          const duplicateAccount = await AccountInstance.findOne({
                 where: { accountNumber: req.body.accountNumber },
          })

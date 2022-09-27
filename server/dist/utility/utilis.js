@@ -56,6 +56,6 @@ exports.createAccountSchema = joi_1.default.object().keys({
     bankName: joi_1.default.string().trim().required(),
     accountNumber: joi_1.default.string().trim().required().pattern(/^[0-9]+$/).length(10),
     accountName: joi_1.default.string().trim().required(),
-    // userId: Joi.string().trim().required(),
-    walletBalance: joi_1.default.number().min(0).required(),
+    userId: joi_1.default.string().trim().required(),
+    walletBalance: joi_1.default.number().min(0),
 });
