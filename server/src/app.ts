@@ -6,6 +6,7 @@ import logger from 'morgan';
 import cors from 'cors'
 
 import db from './config/database.config'
+import accountRouter from './routes/accounts';
 
 db.sync(
 
@@ -31,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/account', accountRouter);
 
 // Error handling
 app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction) {

@@ -28,10 +28,12 @@ async function loginUser(req, res) {
         let verifiedUser = null;
         let verifiedUsername = null;
         if (email) {
-            verifiedUser = await userModel_1.UserInstance.findOne({ where: { isVerified: true, email: email } });
+            verifiedUser = (await userModel_1.UserInstance.findOne({ where: { isVerified: true, email: email } }));
         }
         else if (username) {
-            verifiedUsername = await userModel_1.UserInstance.findOne({ where: { isVerified: true, username: username } });
+            verifiedUsername = (await userModel_1.UserInstance.findOne({
+                where: { isVerified: true, username: username },
+            }));
         }
         if (verifiedUser) {
             id = verifiedUser.id;
@@ -40,6 +42,9 @@ async function loginUser(req, res) {
         else if (verifiedUsername) {
             id = verifiedUsername.id;
             User = verifiedUsername;
+        }
+        else {
+            return res.status(401).json({ message: 'Email not verified' });
         }
         const token = (0, utilis_1.generateToken)({ id });
         if (User && User.password) {
@@ -55,6 +60,7 @@ async function loginUser(req, res) {
         return res.status(500).json({
             message: 'failed to login user',
             route: '/login',
+            err
         });
     }
 }
@@ -239,7 +245,7 @@ async function updateUser(req, res, next) {
         res.status(500).json({
             status: 'Failed',
             Message: 'Unable to update user',
-            error
+            error,
         });
     }
 }
