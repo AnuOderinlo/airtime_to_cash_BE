@@ -10,5 +10,5 @@ const account_1 = require("../controller/account");
 router.post('/create', auth_1.auth, account_1.createAccount);
 router.get('/getaccount', auth_1.auth, account_1.getBankAccounts);
 router.get('/getuseraccount/:id', auth_1.auth, account_1.getUserAccount);
-router.delete('/deleteaccount', auth_1.auth, account_1.deleteBankAccount);
+router.delete('/deleteaccount/:id', auth_1.auth, account_1.deleteBankAccount);
 exports.default = router;

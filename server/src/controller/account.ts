@@ -1,8 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { v4 as uuidv4, validate } from 'uuid';
-import { AccountInstance } from '../model/accounts';
 import { createAccountSchema, options } from '../utility/utilis';
 import { UserInstance } from '../model/userModel';
+import { AccountInstance } from '../model/accountsModel';
 // import { TransactionInstance } from '../model/transactions';
 
 export async function createAccount(
@@ -13,20 +13,13 @@ export async function createAccount(
         const id = uuidv4();
         try {
 
-            const order = await AccountInstance.findByPk(req.params.id, {
-                include: [
-                  {
-                    model: UserInstance,
-                    as: "customer",
-                    attributes: ["bankName", "accountName", "accountNumber"]
-                  }
-                ]
-              });
-              if (!order) {
-                return res.status(404).json({
-                  message: "Account not found"
-                });
-              }
+            // const account = await AccountInstance.findOne({ where: { userId: req.user.id}}) 
+
+            //   if (account) {
+            //     return res.status(404).json({
+            //       message: "Account already exist"
+            //     });
+            //   }
 
          const userID = req.user.id;
          const ValidateAccount = await createAccountSchema.validate(req.body, options);
@@ -63,6 +56,7 @@ export async function createAccount(
         return res.status(500).json({
             status: 'error',
             message: 'internal server error',
+            error
         });
     }
 }
@@ -71,16 +65,23 @@ export async function getBankAccounts(req: Request|any, res: Response, next: Nex
         console.log('here')
         const userID = req.user.id;
         const account = await AccountInstance.findAll({
-            where: { userId: userID },
+            where: { userId: userID }, include: [
+                {
+                  model: UserInstance,
+                  as: "user",
+                  attributes: ["id", "firstname", "lastname", "email"]
+                }
+              ]
         });
-        if (account) {
-            return res.status(200).json({
-                status: 'success',
-                message: 'Account retrieved successfully',
-                data: account,
-            });
-        }
+       
+        return res.status(200).json({
+            status: 'success',
+            message: 'Account retrieved successfully',
+            data: account,
+        });
+        
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             status: 'error',
             message: 'internal server error',
@@ -93,16 +94,20 @@ export async function deleteBankAccount(req: Request, res: Response, next: NextF
         const account = await AccountInstance.findOne({
             where: { id: id },
         });
-        if (account) {
-            await account.destroy();
-            return res.status(200).json({
-                status: 'success',
-                message: 'Account deleted successfully',
+        
+        if (!account) {
+            return res.status(403).json({
+                message: 'Account not found',
             });
         }
+
+        await account.destroy();
+        return res.status(200).json({
+            message: 'Account deleted successfully',
+        });
+        
     } catch (error) {
         return res.status(500).json({
-            status: 'error',
             message: 'internal server error',
         });
     }
@@ -110,7 +115,7 @@ export async function deleteBankAccount(req: Request, res: Response, next: NextF
 export async function getUserAccount(req: Request|any, res: Response, next: NextFunction) {
     try {
         const userID = req.user.id;
-        const account = await AccountInstance.findOne({
+        const account = await AccountInstance.findAll({
             where: { userId: userID },
         });
         if (account) {

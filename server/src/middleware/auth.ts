@@ -48,7 +48,7 @@
 //     res.status(401).json({ message: "User not logged in" });
 //   }
 // }
-import express,{Request,Response,NextFunction} from 'express'
+import {Request,Response,NextFunction} from 'express'
 import jwt from 'jsonwebtoken'
 const secret = process.env.JWT_SECRET as string
 import {UserInstance} from '../model/userModel'
@@ -56,7 +56,7 @@ export async function auth(req:Request | any, res:Response, next:NextFunction){
     try{
         const authorization = req.headers.authorization;
     if(!authorization){
-      res.status(401).json({
+      return res.status(401).json({
         Error: 'Kindly sign in as a user'
       })
     }

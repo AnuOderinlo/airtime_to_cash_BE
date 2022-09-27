@@ -13,7 +13,7 @@ async function auth(req, res, next) {
     try {
         const authorization = req.headers.authorization;
         if (!authorization) {
-            res.status(401).json({
+            return res.status(401).json({
                 Error: 'Kindly sign in as a user'
             });
         }

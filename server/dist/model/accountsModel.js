@@ -30,7 +30,6 @@ AccountInstance.init({
     },
     userId: {
         type: sequelize_1.DataTypes.UUIDV4,
-        allowNull: false
     },
     walletBalance: {
         type: sequelize_1.DataTypes.NUMBER,

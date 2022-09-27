@@ -36,7 +36,6 @@ AccountInstance.init(
     
     userId: {
         type: DataTypes.UUIDV4,
-        allowNull: false
     },
 
     walletBalance: {
@@ -50,13 +49,3 @@ AccountInstance.init(
         tableName: 'accountTable'
     }
 );
-
-UserInstance.hasMany(AccountInstance, {
-    foreignKey: "placedBy",
-    as: "orders"
-  });
-  
-  AccountInstance.belongsTo(UserInstance, {
-    foreignKey: "placedBy",
-    as: "customer"
-  });

@@ -9,6 +9,7 @@ import { TransactionEmail } from '../mailer/email_templates/TransactionTemplate'
 import { options, generateToken, loginUserSchema, registerUserSchema, changePasswordSchema } from '../utility/utilis';
 import { emailVerificationView } from '../mailer/email_templates/VerificationTemplate';
 import { forgotPasswordVerification } from '../mailer/email_templates/ForgotPasswordTemplates';
+import { AccountInstance } from '../model/accountsModel';
 
 const fromUser = process.env.FROM as string;
 const jwtSecret = process.env.JWT_SECRET as string;
@@ -33,7 +34,7 @@ export async function loginUser(req: Request, res: Response) {
     let verifiedUsername = null;
 
     if (email) {
-      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email } })) as unknown as {
+      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email }})) as unknown as {
         [key: string]: string;
       };
     } else if (username) {
@@ -68,6 +69,7 @@ export async function loginUser(req: Request, res: Response) {
     return res.status(500).json({
       message: 'failed to login user',
       route: '/login',
+      err
     });
   }
 }

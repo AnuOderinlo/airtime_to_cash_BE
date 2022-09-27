@@ -6,6 +6,6 @@ import{createAccount, deleteBankAccount, getBankAccounts, getUserAccount} from '
 router.post('/create', auth, createAccount);
 router.get('/getaccount', auth, getBankAccounts);
 router.get('/getuseraccount/:id', auth, getUserAccount);
-router.delete('/deleteaccount', auth, deleteBankAccount);
+router.delete('/deleteaccount/:id', auth, deleteBankAccount);
 
 export default router;
