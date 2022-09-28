@@ -12,9 +12,9 @@ router.get('/', function (req, res, next) {
 });
 router.post('/sendmail', userController_1.sendEmail);
 router.post('/users', userController_1.createUser);
-router.patch('/users/:id', userController_1.updateUser);
 router.post('/login', userController_1.loginUser);
 router.post('/forgot-password', userController_1.forgotPassword);
+router.patch('/users/:id', userController_1.updateUser);
 router.post('/change-password/:id', userController_1.changePassword);
 router.get('/verify/:token', userController_1.verifyUser);
 exports.default = router;

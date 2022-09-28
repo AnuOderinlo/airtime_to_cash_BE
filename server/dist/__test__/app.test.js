@@ -31,4 +31,26 @@ describe('it should test all apis', () => {
         expect(response.body).toHaveProperty('data');
         expect(response.body).toHaveProperty('token');
     });
+    //Login with email
+    it('should login a user with email', async () => {
+        const response = await request.post('/users/login').send({
+            email: 'jane12@example.com',
+            password: '12345',
+        });
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Login successful');
+        expect(response.body).toHaveProperty('token');
+        expect(response.body).toHaveProperty('User');
+    });
+    // Login with username
+    it('should login a user with email', async () => {
+        const response = await request.post('/users/login').send({
+            username: 'jane12',
+            password: '12345',
+        });
+        expect(response.status).toBe(200);
+        expect(response.body.message).toBe('Login successful');
+        expect(response.body).toHaveProperty('token');
+        expect(response.body).toHaveProperty('User');
+    });
 });

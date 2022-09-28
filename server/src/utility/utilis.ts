@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 
+
 export const loginUserSchema = Joi.object().keys({
   email: Joi.string().trim().lowercase(),
   username: Joi.string().trim().lowercase(),
@@ -51,3 +52,11 @@ export const options = {
     },
   },
 };
+
+export const createAccountSchema = Joi.object().keys({
+  bankName: Joi.string().trim().required(),
+  accountNumber: Joi.string().trim().required().pattern(/^[0-9]+$/).length(10),
+  accountName: Joi.string().trim().required(),
+  walletBalance: Joi.number().min(0),
+  userId: Joi.string().trim(),
+});

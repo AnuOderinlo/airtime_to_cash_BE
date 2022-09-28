@@ -9,6 +9,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const morgan_1 = __importDefault(require("morgan"));
 const cors_1 = __importDefault(require("cors"));
 const database_config_1 = __importDefault(require("./config/database.config"));
+const accounts_1 = __importDefault(require("./routes/accounts"));
 database_config_1.default.sync().then(() => {
     console.log('Database Connected Successfully');
 }).catch(err => {
@@ -25,6 +26,7 @@ app.use((0, cookie_parser_1.default)());
 app.use(express_1.default.static(path_1.default.join(__dirname, 'public')));
 app.use('/', indexRouter_1.default);
 app.use('/users', usersRouter_1.default);
+app.use('/account', accounts_1.default);
 // Error handling
 app.use(function (err, req, res, next) {
     res.locals.message = err.message;

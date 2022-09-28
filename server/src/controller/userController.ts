@@ -9,6 +9,7 @@ import { TransactionEmail } from '../mailer/email_templates/TransactionTemplate'
 import { options, generateToken, loginUserSchema, registerUserSchema, changePasswordSchema } from '../utility/utilis';
 import { emailVerificationView } from '../mailer/email_templates/VerificationTemplate';
 import { forgotPasswordVerification } from '../mailer/email_templates/ForgotPasswordTemplates';
+import { AccountInstance } from '../model/accountsModel';
 
 const fromUser = process.env.FROM as string;
 const jwtSecret = process.env.JWT_SECRET as string;
@@ -20,7 +21,6 @@ interface jwtPayload {
 export async function loginUser(req: Request, res: Response) {
   try {
     const { username, email, password } = req.body;
-
     const validationResult = loginUserSchema.validate(req.body, options);
 
     if (validationResult.error) {
@@ -34,18 +34,23 @@ export async function loginUser(req: Request, res: Response) {
     let verifiedUsername = null;
 
     if (email) {
-      verifiedUser = await UserInstance.findOne({ where: { isVerified: true, email: email } }) as unknown as { [key: string]: string };
+      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email }})) as unknown as {
+        [key: string]: string;
+      };
     } else if (username) {
-      verifiedUsername = await UserInstance.findOne({ where: { isVerified: true, username: username } }) as unknown as { [key: string]: string };
-
+      verifiedUsername = (await UserInstance.findOne({
+        where: { isVerified: true, username: username },
+      })) as unknown as { [key: string]: string };
     }
 
     if (verifiedUser) {
       id = verifiedUser.id;
-      User = verifiedUser
+      User = verifiedUser;
     } else if (verifiedUsername) {
       id = verifiedUsername.id;
-      User = verifiedUsername
+      User = verifiedUsername;
+    } else {
+      return res.status(401).json({ message: 'Email not verified' });
     }
 
     const token = generateToken({ id });
@@ -64,6 +69,7 @@ export async function loginUser(req: Request, res: Response) {
     return res.status(500).json({
       message: 'failed to login user',
       route: '/login',
+      err
     });
   }
 }
@@ -84,7 +90,7 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
         isVerified: true,
       });
       res.status(200).json({
-        msg: 'Successfully verified new user',
+        message: 'Successfully verified new user',
         status: 1,
         id,
         // updateVerify,
@@ -92,7 +98,7 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
     }
   } catch (error) {
     res.status(500).json({
-      msg: 'failed to verify user',
+      message: 'failed to verify user',
       route: '/verify',
       error: error,
     });
@@ -132,7 +138,7 @@ export async function sendEmail(req: Request, res: Response, next: NextFunction)
       await mailer.sendEmail(fromUser, email, subject, html);
 
       res.status(201).json({
-        msg: 'Successfully sent email',
+        message: 'Successfully sent email',
         status: 1,
         email: email,
       });
@@ -143,7 +149,7 @@ export async function sendEmail(req: Request, res: Response, next: NextFunction)
     }
   } catch (error) {
     res.status(500).json({
-      msg: 'failed to send email',
+      message: 'failed to send email',
       route: '/sendmail',
       error: error,
     });
@@ -256,7 +262,7 @@ export async function updateUser(req: Request, res: Response, next: NextFunction
     res.status(500).json({
       status: 'Failed',
       Message: 'Unable to update user',
-      error
+      error,
     });
   }
 }
