@@ -32,17 +32,31 @@ export const registerUserSchema = Joi.object()
   })
   .with('password', 'confirmPassword');
 
-export const changePasswordSchema = Joi.object()
-  .keys({
-    password: Joi.string().required(),
-    confirmPassword: Joi.any()
-      .equal(Joi.ref('password'))
-      .required()
-      .label('Confirm password')
-      .messages({ 'any.only': '{{#label}} does not match' }),
-  })
-  .with('password', 'confirmPassword');
+export const changePasswordSchema = Joi.object().keys({
+  password: Joi.string().required(),
+  confirmPassword: Joi.any()
+    .equal(Joi.ref('password'))
+    .required()
+    .label('Confirm password')
+    .messages({ 'any.only': '{{#label}} does not match' }),
+})
+.with('password', 'confirmPassword');
 
+export const createAccountSchema = Joi.object().keys({
+  bankName: Joi.string().trim().required(),
+  accountNumber: Joi.string().trim().required().pattern(/^[0-9]+$/).length(10),
+  accountName: Joi.string().trim().required(),
+  walletBalance: Joi.number().min(0),
+  userId: Joi.string().trim(),
+});
+
+export const transactionsSchema = Joi.object().keys({
+  network: Joi.string().required(),
+  phoneNumber: Joi.string().required(),
+  amount: Joi.string().required(),
+  status: Joi.boolean(),
+  userId: Joi.string()
+})
 
 export const options = {
   abortEarly: false,
@@ -53,10 +67,4 @@ export const options = {
   },
 };
 
-export const createAccountSchema = Joi.object().keys({
-  bankName: Joi.string().trim().required(),
-  accountNumber: Joi.string().trim().required().pattern(/^[0-9]+$/).length(10),
-  accountName: Joi.string().trim().required(),
-  walletBalance: Joi.number().min(0),
-  userId: Joi.string().trim(),
-});
+
