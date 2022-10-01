@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAccountSchema = exports.options = exports.changePasswordSchema = exports.registerUserSchema = exports.generateToken = exports.loginUserSchema = void 0;
+exports.options = exports.transactionsSchema = exports.createAccountSchema = exports.changePasswordSchema = exports.registerUserSchema = exports.generateToken = exports.loginUserSchema = void 0;
 const joi_1 = __importDefault(require("joi"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 exports.loginUserSchema = joi_1.default.object().keys({
@@ -34,8 +34,7 @@ exports.registerUserSchema = joi_1.default.object()
     confirmPassword: joi_1.default.ref('password'),
 })
     .with('password', 'confirmPassword');
-exports.changePasswordSchema = joi_1.default.object()
-    .keys({
+exports.changePasswordSchema = joi_1.default.object().keys({
     password: joi_1.default.string().required(),
     confirmPassword: joi_1.default.any()
         .equal(joi_1.default.ref('password'))
@@ -44,6 +43,20 @@ exports.changePasswordSchema = joi_1.default.object()
         .messages({ 'any.only': '{{#label}} does not match' }),
 })
     .with('password', 'confirmPassword');
+exports.createAccountSchema = joi_1.default.object().keys({
+    bankName: joi_1.default.string().trim().required(),
+    accountNumber: joi_1.default.string().trim().required().pattern(/^[0-9]+$/).length(10),
+    accountName: joi_1.default.string().trim().required(),
+    walletBalance: joi_1.default.number().min(0),
+    userId: joi_1.default.string().trim(),
+});
+exports.transactionsSchema = joi_1.default.object().keys({
+    network: joi_1.default.string().required(),
+    phoneNumber: joi_1.default.string().required(),
+    amount: joi_1.default.string().required(),
+    status: joi_1.default.boolean(),
+    userId: joi_1.default.string()
+});
 exports.options = {
     abortEarly: false,
     errors: {
@@ -52,10 +65,3 @@ exports.options = {
         },
     },
 };
-exports.createAccountSchema = joi_1.default.object().keys({
-    bankName: joi_1.default.string().trim().required(),
-    accountNumber: joi_1.default.string().trim().required().pattern(/^[0-9]+$/).length(10),
-    accountName: joi_1.default.string().trim().required(),
-    walletBalance: joi_1.default.number().min(0),
-    userId: joi_1.default.string().trim(),
-});

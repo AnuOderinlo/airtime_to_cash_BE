@@ -58,7 +58,6 @@ async function createAccount(req, res, next) {
 exports.createAccount = createAccount;
 async function getBankAccounts(req, res, next) {
     try {
-        console.log('here');
         const userID = req.user.id;
         const account = await accountsModel_1.AccountInstance.findAll({
             where: { userId: userID }, include: [

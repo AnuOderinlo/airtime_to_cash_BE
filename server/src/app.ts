@@ -8,9 +8,7 @@ import cors from 'cors'
 import db from './config/database.config'
 import accountRouter from './routes/accounts';
 
-db.sync(
-
-).then(() => {
+db.sync().then(() => {
   console.log('Database Connected Successfully')
 }).catch(err => {
   console.log(err)
@@ -19,6 +17,7 @@ db.sync(
 
 import indexRouter from './routes/indexRouter';
 import usersRouter from './routes/usersRouter';
+import transactionsRouter from './routes/transactionsRouter';
 
 const app = express();
 app.use(cors()); // included cors
@@ -33,6 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/account', accountRouter);
+app.use('/transactions', transactionsRouter);
 
 // Error handling
 app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction) {
