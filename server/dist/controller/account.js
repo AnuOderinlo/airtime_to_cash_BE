@@ -28,7 +28,7 @@ async function createAccount(req, res, next) {
         });
         if (duplicateAccount) {
             return res.status(409).json({
-                msg: "Account number is used, please enter another account number",
+                message: "Account number is used, please enter another account number",
             });
         }
         const record = await accountsModel_1.AccountInstance.create({

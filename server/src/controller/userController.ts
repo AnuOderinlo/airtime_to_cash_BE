@@ -90,14 +90,14 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
         isVerified: true,
       });
       res.status(200).json({
-        msg: 'Successfully verified new user',
+        message: 'Successfully verified new user',
         status: 1,
         id,
       });
     }
   } catch (error) {
     res.status(500).json({
-      msg: 'failed to verify user',
+      message: 'failed to verify user',
       route: '/verify',
       error: error,
     });
@@ -137,7 +137,7 @@ export async function sendEmail(req: Request, res: Response, next: NextFunction)
       await mailer.sendEmail(fromUser, email, subject, html);
 
       res.status(201).json({
-        msg: 'Successfully sent email',
+        message: 'Successfully sent email',
         status: 1,
         email: email,
       });
@@ -148,7 +148,7 @@ export async function sendEmail(req: Request, res: Response, next: NextFunction)
     }
   } catch (error) {
     res.status(500).json({
-      msg: 'failed to send email',
+      message: 'failed to send email',
       route: '/sendmail',
       error: error,
     });

@@ -81,7 +81,7 @@ async function verifyUser(req, res, next) {
                 isVerified: true,
             });
             res.status(200).json({
-                msg: 'Successfully verified new user',
+                message: 'Successfully verified new user',
                 status: 1,
                 id,
             });
@@ -89,7 +89,7 @@ async function verifyUser(req, res, next) {
     }
     catch (error) {
         res.status(500).json({
-            msg: 'failed to verify user',
+            message: 'failed to verify user',
             route: '/verify',
             error: error,
         });
@@ -125,7 +125,7 @@ async function sendEmail(req, res, next) {
             }
             await SendMail_1.default.sendEmail(fromUser, email, subject, html);
             res.status(201).json({
-                msg: 'Successfully sent email',
+                message: 'Successfully sent email',
                 status: 1,
                 email: email,
             });
@@ -138,7 +138,7 @@ async function sendEmail(req, res, next) {
     }
     catch (error) {
         res.status(500).json({
-            msg: 'failed to send email',
+            message: 'failed to send email',
             route: '/sendmail',
             error: error,
         });
