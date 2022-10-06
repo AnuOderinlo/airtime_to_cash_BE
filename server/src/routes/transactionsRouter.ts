@@ -6,5 +6,4 @@ const router = express.Router();
 
 router.post('/', auth, createTransaction)
 router.get('/', auth, getTransaction)
-
 export default router;
