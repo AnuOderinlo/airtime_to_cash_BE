@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../config/database.config';
 import { AccountInstance } from "./accountsModel";
+import { TransactionsInstance } from './transactionsModel';
 
 interface UserAttribute {
   id: string;
@@ -12,9 +13,12 @@ interface UserAttribute {
   password: string;
   avatar: string;
   isVerified: boolean;
+  wallet?: number;
 }
 
-export class UserInstance extends Model<UserAttribute> {}
+export class UserInstance extends Model<UserAttribute> {
+  [x: string]: any;
+}
 
 UserInstance.init(
   {
@@ -107,6 +111,11 @@ UserInstance.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    wallet: {
+      type: DataTypes.NUMBER,
+      allowNull: true,
+      defaultValue: 0,
+    }
   },
   {
     sequelize: db,
@@ -114,12 +123,8 @@ UserInstance.init(
   },
 );
 
-UserInstance.hasMany(AccountInstance, {
-  foreignKey: "userId",
-  as: "account"
-});
+UserInstance.hasMany(AccountInstance, { foreignKey: "userId", as: "account" });
+UserInstance.hasMany(TransactionsInstance, { foreignKey: "userId", as: "Transactions" });
 
-AccountInstance.belongsTo(UserInstance, {
-  foreignKey: "userId",
-  as: "user"
-});
+AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
+TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
