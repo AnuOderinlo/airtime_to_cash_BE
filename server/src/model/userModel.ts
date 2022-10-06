@@ -15,6 +15,7 @@ interface UserAttribute {
   avatar: string;
   isVerified: boolean;
   walletBalance?: number;
+  role?: string;
 }
 
 export class UserInstance extends Model<UserAttribute> {}
@@ -114,6 +115,11 @@ UserInstance.init(
       type: DataTypes.FLOAT,
       allowNull: true,
       defaultValue: 0.0,
+    },
+    role: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'user',
     },
   },
   {
