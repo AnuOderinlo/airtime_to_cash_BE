@@ -18,6 +18,7 @@ db.sync().then(() => {
 import indexRouter from './routes/indexRouter';
 import usersRouter from './routes/usersRouter';
 import transactionsRouter from './routes/transactionsRouter';
+import withdrawalRouter from './routes/withdrawalRouter'
 
 const app = express();
 app.use(cors()); // included cors
@@ -33,6 +34,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/account', accountRouter);
 app.use('/transactions', transactionsRouter);
+app.use('/withdrawal', withdrawalRouter);
 
 // Error handling
 app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction) {

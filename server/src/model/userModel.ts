@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import db from '../config/database.config';
 import { AccountInstance } from "./accountsModel";
 import { TransactionsInstance } from './transactionsModel';
+import { WithdrawBalanceInstance } from './withdrawBalanceModel';
 
 interface UserAttribute {
   id: string;
@@ -13,6 +14,7 @@ interface UserAttribute {
   password: string;
   avatar: string;
   isVerified: boolean;
+  walletBalance: number;
 }
 
 export class UserInstance extends Model<UserAttribute> {}
@@ -108,6 +110,11 @@ UserInstance.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    walletBalance: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      defaultValue: 0.0,
+    },
   },
   {
     sequelize: db,
@@ -117,6 +124,9 @@ UserInstance.init(
 
 UserInstance.hasMany(AccountInstance, { foreignKey: "userId", as: "account" });
 UserInstance.hasMany(TransactionsInstance, { foreignKey: "userId", as: "Transactions" });
+UserInstance.hasMany(WithdrawBalanceInstance, { foreignKey: "userId", as: "Withdrawals" });
 
 AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
 TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
+WithdrawBalanceInstance.belongsTo(UserInstance,{foreignKey:"userId", as:"user"})
+

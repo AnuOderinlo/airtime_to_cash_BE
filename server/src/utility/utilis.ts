@@ -55,12 +55,25 @@ export const transactionsSchema = Joi.object().keys({
   phoneNumber: Joi.string().required(),
   amount: Joi.string().required(),
   status: Joi.boolean(),
-  userId: Joi.string()
+  userId: Joi.string(),
 })
+
+export const withdrawalSchema = Joi.object().keys({
+  id: Joi.string(),
+  amount: Joi.string().required(),
+  status: Joi.boolean(),
+  accountNumber:Joi.string().trim().required().pattern(/^[0-9]+$/).length(10),
+  bankName: Joi.string().trim().required(),
+  userId: Joi.string(),
+  email: Joi.string(),
+  bankCode: Joi.string(),
+  password: Joi.string().required()
+})
+
 
 export const options = {
   abortEarly: false,
-  errors: {
+  errors: { 
     wrap: {
       label: '',
     },

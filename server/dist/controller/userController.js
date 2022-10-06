@@ -192,6 +192,7 @@ async function createUser(req, res, next) {
             confirmPassword: ConfirmPasswordHash,
             avatar: req.body.avatar,
             isVerified: req.body.isVerified,
+            walletBalance: req.body.walletBalance
         };
         const userDetails = await userModel_1.UserInstance.create(userData);
         // const id = userDetails?.id;
