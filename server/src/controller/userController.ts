@@ -208,6 +208,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
       confirmPassword: ConfirmPasswordHash,
       avatar: req.body.avatar,
       isVerified: req.body.isVerified,
+      walletBalance: req.body.walletBalance
     };
 
     const userDetails = await UserInstance.create(userData);
@@ -346,7 +347,7 @@ export async function creditWallet(req: Request, res: Response) {
       const { wallet } = user;
       const newAmount = amount + wallet;
       await user?.update({
-        wallet: newAmount
+        walletBalance: newAmount
       });
 
       res.status(200).json({
