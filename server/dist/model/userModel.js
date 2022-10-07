@@ -103,8 +103,13 @@ UserInstance.init({
     },
     walletBalance: {
         type: sequelize_1.DataTypes.FLOAT,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0.0,
+    },
+    role: {
+        type: sequelize_1.DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'user',
     },
 }, {
     sequelize: database_config_1.default,
