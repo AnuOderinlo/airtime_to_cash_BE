@@ -209,6 +209,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
       confirmPassword: ConfirmPasswordHash,
       avatar: req.body.avatar,
       isVerified: req.body.isVerified,
+      walletBalance: req.body.walletBalance
     };
 
     const userDetails = await UserInstance.create(userData);
