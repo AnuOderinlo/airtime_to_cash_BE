@@ -33,7 +33,7 @@ export async function createTransaction(req: Request | any, res: Response, next:
     html = TransactionEmail(
       `Transfer of ${req.body.amount} from ${req.body.network} network was sent by ${req.body.phoneNumber}. Kindly confirm and verify.<br>Thank you`,
     );
-    await mailer.sendEmail(fromUser, 'oderinloanuoluwapo@gmail.com', 'Verify Transfer Airtime', html);
+    await mailer.sendEmail(fromUser, 'chidi.i.okeke@gmail.com', 'Verify Transfer Airtime', html);
 
     return res.status(201).json({ message: 'Transaction Created Successfully', transaction });
   } catch (error) {

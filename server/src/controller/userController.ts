@@ -225,7 +225,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
       data: userDetails,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
     res.status(500).json({
       status: 'Failed',

@@ -14,7 +14,7 @@ interface UserAttribute {
   password: string;
   avatar: string;
   isVerified: boolean;
-  walletBalance: number;
+  walletBalance?: number;
 }
 
 export class UserInstance extends Model<UserAttribute> {
@@ -114,7 +114,7 @@ UserInstance.init(
     },
     walletBalance: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
       defaultValue: 0.0,
     },
   },
@@ -128,7 +128,7 @@ UserInstance.hasMany(AccountInstance, { foreignKey: "userId", as: "account" });
 UserInstance.hasMany(TransactionsInstance, { foreignKey: "userId", as: "Transactions" });
 UserInstance.hasMany(WithdrawBalanceInstance, { foreignKey: "userId", as: "Withdrawals" });
 
-AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
-TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
-WithdrawBalanceInstance.belongsTo(UserInstance,{foreignKey:"userId", as:"user"})
+AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
+TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
+WithdrawBalanceInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" })
 

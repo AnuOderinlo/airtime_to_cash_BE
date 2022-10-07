@@ -103,7 +103,7 @@ UserInstance.init({
     },
     walletBalance: {
         type: sequelize_1.DataTypes.FLOAT,
-        allowNull: false,
+        allowNull: true,
         defaultValue: 0.0,
     },
 }, {
