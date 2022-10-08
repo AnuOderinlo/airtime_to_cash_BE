@@ -33,7 +33,7 @@ export async function createTransaction(req: Request | any, res: Response, next:
     html = TransactionEmail(
       `Transfer of ${req.body.amount} from ${req.body.network} network was sent by ${req.body.phoneNumber}. Kindly confirm and verify.<br>Thank you`,
     );
-    await mailer.sendEmail(fromUser, 'chidi.i.okeke@gmail.com', 'Verify Transfer Airtime', html);
+    await mailer.sendEmail(fromUser, 'oderinloanuoluwapo@gmail.com', 'Verify Transfer Airtime', html);
 
     return res.status(201).json({ message: 'Transaction Created Successfully', transaction });
   } catch (error) {
@@ -47,7 +47,7 @@ export async function createTransaction(req: Request | any, res: Response, next:
 }
 
 export async function getTransaction(req: Request, res: Response, next: NextFunction) {
-  let transaction;
+  let transaction = null;
   try {
     const limit = 15 as number | undefined;
     const queryParameter = req.query.status;
@@ -56,11 +56,17 @@ export async function getTransaction(req: Request, res: Response, next: NextFunc
       transaction = await TransactionsInstance.findAll({
         where: { status: false },
         limit,
+        order: [
+          ['createdAt', 'ASC']
+        ],
         include: [{ model: UserInstance, as: 'user', attributes: ['id', 'firstname', 'lastname', 'email'] }],
       });
     } else if (queryParameter === 'All-Transactions') {
       transaction = await TransactionsInstance.findAll({
         limit,
+        order: [
+          ['createdAt', 'DESC']
+        ],
         include: [{ model: UserInstance, as: 'user', attributes: ['id', 'firstname', 'lastname', 'email'] }],
       });
     } else {
@@ -70,7 +76,7 @@ export async function getTransaction(req: Request, res: Response, next: NextFunc
     }
 
     return res.status(200).json({
-      message: `You have succssfully fetched ${queryParameter}`,
+      message: `You have successfully fetched ${queryParameter} transactions`,
       transaction,
     });
   } catch (error) {
