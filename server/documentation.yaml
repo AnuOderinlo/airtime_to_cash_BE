@@ -1,0 +1,562 @@
+openapi: 3.0.0
+info:
+  title: Aritime2Cash
+  description: Airtime Cash allows users to sell their airtime for cash. It features a wallet which holds the funds' users receive in return for sold airtime and allows for the withdrawal of those funds into the user’s designated bank account.
+  contact: {}
+  version: '1.0'
+servers:
+- url: http://127.0.0.1:4000
+  description: APIs for Users, account, withdraw
+  variables: {}
+paths:
+  /users/users:
+    post:
+      tags:
+      - User
+      summary: Create a User
+      operationId: CreateaUser
+      parameters: []
+      requestBody:
+        description: "Create a User"
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/CreateaUserRequest'
+              - example:
+                  firstname: John
+                  lastname: Eze
+                  email: john@gmail.com
+                  username: jD
+                  phoneNumber: '07091291932'
+                  password: '12345'
+                  confirmPassword: '12345'
+            example:
+              firstname: John
+              lastname: Eze
+              email: john@gmail.com
+              username: jD
+              phoneNumber: '07091291932'
+              password: '12345'
+              confirmPassword: '12345'
+        required: true
+      responses:
+        '200':
+          description: 'Create a User'
+          headers: {}
+      deprecated: false
+      security: []
+  /users/login:
+    post:
+      tags:
+      - User
+      summary: Login User
+      operationId: LoginUser
+      parameters: []
+      requestBody:
+        description: 'Login user'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/LoginUserRequest'
+              - example:
+                  email: john@gmail.com
+                  password: '54321'
+            example:
+              email: john@gmail.com
+              password: '54321'
+        required: true
+      responses:
+        '200':
+          description: 'Login user'
+          headers: {}
+      deprecated: false
+      security: []
+  /users/users/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The user ID
+    patch:
+      tags:
+      - User
+      summary: Update a user
+      operationId: Updateauser
+      parameters: []
+      requestBody:
+        description: 'Update a user'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/UpdateauserRequest'
+              - example:
+                  phoneNumber: '07091200000'
+            example:
+              phoneNumber: '07091200000'
+        required: true
+      responses:
+        '200':
+          description: 'Update a user'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /users/change-password/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: The user ID
+    post:
+      tags:
+      - User
+      summary: change password
+      operationId: changepassword
+      parameters: []
+      requestBody:
+        description: 'change password'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/changepasswordrequest'
+              - example:
+                  password: '54321'
+                  confirmPassword: '54321'
+            example:
+              password: '54321'
+              confirmPassword: '54321'
+        required: true
+      responses:
+        '200':
+          description: 'change password'
+          headers: {}
+      deprecated: false
+  /users/verify/{token}: 
+    parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+        description: The user ID
+    get:
+      tags:
+      - User
+      summary: Verify User
+      operationId: VerifyUser
+      parameters: []
+      responses:
+        '200':
+          description: 'Verify User'
+          headers: {}
+      deprecated: false
+      security: []
+  /users/forgot-password:
+    post:
+      tags:
+      - User
+      summary: Forgot Password
+      operationId: ForgotPassword
+      parameters: []
+      requestBody:
+        description: 'Verify User'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/ForgotPasswordRequest'
+              - example:
+                  email: john@gmail.com
+            example:
+              email: john@gmail.com
+        required: true
+      responses:
+        '200':
+          description: 'Verified User'
+          headers: {}
+      deprecated: false
+      security: []
+  /transactions:
+    post:
+      tags:
+      - Transaction
+      summary: Create Transfer Transaction
+      operationId: CreateTransferTransaction
+      parameters: []
+      requestBody:
+        description: 'Create Transfer Transaction'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/CreateTransferTransactionRequest'
+              - example:
+                  network: MTN
+                  phoneNumber: '07038406123'
+                  amount: '2000'
+            example:
+              network: MTN
+              phoneNumber: '07038406123'
+              amount: '2000'
+        required: true
+      responses:
+        '200':
+          description: 'Transaction created'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+    get:
+      tags:
+      - Transaction
+      summary: Get all Transaction
+      operationId: GetallTransaction
+      parameters:
+      - name: status
+        in: query
+        description: ''
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: Pending-Transactions
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /account/create:
+    post:
+      tags:
+      - Accounts
+      summary: Create an Account
+      operationId: CreateanAccount
+      parameters: []
+      requestBody:
+        description: 'Create an Account'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/CreateanAccountRequest'
+              - example:
+                  bankName: Access bank
+                  accountNumber: '1234567890'
+                  accountName: John D
+                  walletBalance: 1000
+            example:
+              bankName: Access bank
+              accountNumber: '1234567890'
+              accountName: John D
+              walletBalance: 1000
+        required: true
+      responses:
+        '200':
+          description: 'Account created'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /account/getaccount:
+    get:
+      tags:
+      - Accounts
+      summary: Get all accounts
+      operationId: Getallaccounts
+      parameters: []
+      responses:
+        '200':
+          description: 'Get all accounts'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /account/getuseraccount/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: Get user account
+    get:
+      tags:
+      - Accounts
+      summary: Get user account
+      operationId: Getuseraccount
+      parameters: []
+      responses:
+        '200':
+          description: 'All accounts fetched'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /account/deleteaccount/{id}:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: Delete an account
+    delete:
+      tags:
+      - Accounts
+      summary: Delete an account
+      operationId: Deleteanaccount
+      parameters: []
+      responses:
+        '200':
+          description: 'Account Deleted'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /withdrawal/getAll:
+    get:
+      tags:
+      - Withdrawal
+      summary: Get all withdrawals
+      operationId: Getallwithdrawals
+      parameters: []
+      responses:
+        '200':
+          description: 'All withdrawals'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /withdrawal/getUserWithdrawal:
+    get:
+      tags:
+      - Withdrawal
+      summary: Withdraw wallet
+      operationId: Withdrawwallet
+      parameters:
+      - name: state
+        in: query
+        description: 'Get user withdrawal'
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: boolean
+          example: true
+      responses:
+        '200':
+          description: 'User withdrawals'
+          headers: {}
+      deprecated: false
+      security:
+      - bearer: []
+  /withdrawal/withdraw:
+    post:
+      tags:
+      - Withdrawal
+      summary: Create withdrawal
+      operationId: Createwithdrawal
+      parameters: []
+      requestBody:
+        description: 'Create withdrawal'
+        content:
+          application/json:
+            schema:
+              allOf:
+              - $ref: '#/components/schemas/CreatewithdrawalRequest'
+              - example:
+                  email: ''
+                  amount: ''
+                  accountNumber: ''
+                  bankName: ''
+                  password: ''
+                  bankCode: ''
+            example:
+              email: ''
+              amount: ''
+              accountNumber: ''
+              bankName: ''
+              password: ''
+              bankCode: ''
+        required: true
+      responses:
+        '200':
+          description: 'Withdrawal created'
+          headers: {}
+      deprecated: false
+components:
+  schemas:
+    CreateaUserRequest:
+      title: CreateaUserRequest
+      required:
+      - firstname
+      - lastname
+      - email
+      - username
+      - phoneNumber
+      - password
+      - confirmPassword
+      type: object
+      properties:
+        firstname:
+          type: string
+        lastname:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+        phoneNumber:
+          type: string
+        password:
+          type: string
+        confirmPassword:
+          type: string
+      example:
+        firstname: John
+        lastname: Eze
+        email: john@gmail.com
+        username: jD
+        phoneNumber: '07091291932'
+        password: '12345'
+        confirmPassword: '12345'
+    LoginUserRequest:
+      title: LoginUserRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: john@gmail.com
+        password: '54321'
+    UpdateauserRequest:
+      title: UpdateauserRequest
+      required:
+      - phoneNumber
+      type: object
+      properties:
+        phoneNumber:
+          type: string
+      example:
+        phoneNumber: '07091200000'
+    changepasswordrequest:
+      title: changepasswordrequest
+      required:
+      - password
+      - confirmPassword
+      type: object
+      properties:
+        password:
+          type: string
+        confirmPassword:
+          type: string
+      example:
+        password: '54321'
+        confirmPassword: '54321'
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+      example:
+        email: john@gmail.com
+    CreateTransferTransactionRequest:
+      title: CreateTransferTransactionRequest
+      required:
+      - network
+      - phoneNumber
+      - amount
+      type: object
+      properties:
+        network:
+          type: string
+        phoneNumber:
+          type: string
+        amount:
+          type: string
+      example:
+        network: MTN
+        phoneNumber: '07038406123'
+        amount: '2000'
+    CreateanAccountRequest:
+      title: CreateanAccountRequest
+      required:
+      - bankName
+      - accountNumber
+      - accountName
+      - walletBalance
+      type: object
+      properties:
+        bankName:
+          type: string
+        accountNumber:
+          type: string
+        accountName:
+          type: string
+        walletBalance:
+          type: integer
+          format: int32
+      example:
+        bankName: Access bank
+        accountNumber: '1234567890'
+        accountName: John D
+        walletBalance: 1000
+    CreatewithdrawalRequest:
+      title: CreatewithdrawalRequest
+      required:
+      - email
+      - amount
+      - accountNumber
+      - bankName
+      - password
+      - bankCode
+      type: object
+      properties:
+        email:
+          type: string
+        amount:
+          type: string
+        accountNumber:
+          type: string
+        bankName:
+          type: string
+        password:
+          type: string
+        bankCode:
+          type: string
+      example:
+        email: ''
+        amount: ''
+        accountNumber: ''
+        bankName: ''
+        password: ''
+        bankCode: ''
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+security: []
+tags:
+- name: User
+- name: Transaction
+- name: Accounts
+- name: Withdrawal
