@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { changePassword, createUser, forgotPassword, loginUser, sendEmail, updateUser, verifyUser } from '../controller/userController';
+import { changePassword, createUser, creditWallet, forgotPassword, loginUser, sendEmail, updateUser, verifyUser } from '../controller/userController';
 
 const router = express.Router();
 /* GET users listing. */
@@ -10,6 +10,7 @@ router.get('/', function (req, res, next) {
 router.post('/sendmail', sendEmail)
 router.post('/users', createUser);
 router.post('/login', loginUser);
+router.post('/credit', creditWallet);
 router.post('/forgot-password', forgotPassword);
 router.patch('/users/:id', updateUser);
 router.post('/change-password/:id', changePassword);

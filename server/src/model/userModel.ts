@@ -18,7 +18,9 @@ interface UserAttribute {
   role?: string;
 }
 
-export class UserInstance extends Model<UserAttribute> {}
+export class UserInstance extends Model<UserAttribute> {
+  [x: string]: any;
+}
 
 UserInstance.init(
   {
@@ -132,7 +134,7 @@ UserInstance.hasMany(AccountInstance, { foreignKey: "userId", as: "account" });
 UserInstance.hasMany(TransactionsInstance, { foreignKey: "userId", as: "Transactions" });
 UserInstance.hasMany(WithdrawBalanceInstance, { foreignKey: "userId", as: "Withdrawals" });
 
-AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
-TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user"});
-WithdrawBalanceInstance.belongsTo(UserInstance,{foreignKey:"userId", as:"user"})
+AccountInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
+TransactionsInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" });
+WithdrawBalanceInstance.belongsTo(UserInstance, { foreignKey: "userId", as: "user" })
 

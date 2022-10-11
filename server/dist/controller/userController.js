@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
+exports.creditWallet = exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -84,7 +84,6 @@ async function verifyUser(req, res, next) {
                 message: 'Successfully verified new user',
                 status: 1,
                 id,
-                // updateVerify,
             });
         }
     }
@@ -152,7 +151,7 @@ async function createUser(req, res, next) {
         const validationResult = utilis_1.registerUserSchema.validate(req.body, utilis_1.options);
         if (validationResult.error) {
             return res.status(400).json({
-                Error: validationResult.error.details[0].message,
+                error: validationResult.error.details[0].message,
             });
         }
         const duplicateEmail = await userModel_1.UserInstance.findOne({
@@ -208,10 +207,11 @@ async function createUser(req, res, next) {
         });
     }
     catch (error) {
-        console.log(error);
+        // console.log(error);
         res.status(500).json({
             status: 'Failed',
-            Message: 'Unable to create a user',
+            message: 'Unable to create a user',
+            error
         });
     }
 }
@@ -313,3 +313,38 @@ async function changePassword(req, res) {
     }
 }
 exports.changePassword = changePassword;
+async function creditWallet(req, res) {
+    try {
+        const { amount, email } = req.body;
+        const user = await userModel_1.UserInstance.findOne({
+            where: {
+                email: email
+            },
+        });
+        if (!user) {
+            return res.status(404).json({
+                message: 'email not found',
+            });
+        }
+        else {
+            const { wallet } = user;
+            const newAmount = amount + wallet;
+            await user?.update({
+                walletBalance: newAmount
+            });
+            res.status(200).json({
+                message: 'Successfully updated wallet',
+                status: 1,
+                wallet: newAmount
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            status: 'Failed',
+            Message: 'Unable to update wallet',
+            error,
+        });
+    }
+}
+exports.creditWallet = creditWallet;

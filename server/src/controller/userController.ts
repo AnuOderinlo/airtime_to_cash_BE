@@ -34,7 +34,7 @@ export async function loginUser(req: Request, res: Response) {
     let verifiedUsername = null;
 
     if (email) {
-      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email }})) as unknown as {
+      verifiedUser = (await UserInstance.findOne({ where: { isVerified: true, email: email } })) as unknown as {
         [key: string]: string;
       };
     } else if (username) {
@@ -93,7 +93,6 @@ export async function verifyUser(req: Request, res: Response, next: NextFunction
         message: 'Successfully verified new user',
         status: 1,
         id,
-        // updateVerify,
       });
     }
   } catch (error) {
@@ -163,7 +162,7 @@ export async function createUser(req: Request, res: Response, next: NextFunction
     const validationResult = registerUserSchema.validate(req.body, options);
     if (validationResult.error) {
       return res.status(400).json({
-        Error: validationResult.error.details[0].message,
+        error: validationResult.error.details[0].message,
       });
     }
     const duplicateEmail = await UserInstance.findOne({
@@ -226,11 +225,12 @@ export async function createUser(req: Request, res: Response, next: NextFunction
       data: userDetails,
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
 
     res.status(500).json({
       status: 'Failed',
-      Message: 'Unable to create a user',
+      message: 'Unable to create a user',
+      error
     });
   }
 }
@@ -324,6 +324,44 @@ export async function changePassword(req: Request, res: Response) {
     console.log(error);
     res.status(500).json({
       message: 'Internal server error',
+    });
+  }
+}
+
+
+export async function creditWallet(req: Request, res: Response) {
+  try {
+    const { amount, email } = req.body;
+    const user = await UserInstance.findOne({
+      where: {
+        email: email
+      },
+    })
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'email not found',
+      });
+    } else {
+
+      const { wallet } = user;
+      const newAmount = amount + wallet;
+      await user?.update({
+        walletBalance: newAmount
+      });
+
+      res.status(200).json({
+        message: 'Successfully updated wallet',
+        status: 1,
+        wallet: newAmount
+      });
+    }
+
+  } catch (error) {
+    res.status(500).json({
+      status: 'Failed',
+      Message: 'Unable to update wallet',
+      error,
     });
   }
 }
