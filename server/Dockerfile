@@ -1,21 +1,19 @@
-FROM node:14-alpine AS compilation
+FROM node:14-alpine
 
-ENV NODE_ENV=development
+ENV NODE_ENV=production
 
-USER node
+WORKDIR /usr/src/app
 
-WORKDIR /home/node/app
-
-COPY ./package.json .
+COPY ["package.json", "package-lock.json*", "./"]
 
 RUN yarn
 
 COPY . .
 
-RUN yarn tsc
+EXPOSE 8080
 
-EXPOSE 3000
+RUN chown -R node /usr/src/app
 
-VOLUME [ "$(pwd)/node_modules:/home/node/app/node_modules" ];
+USER node
 
-CMD ["yarn", "dev:start"]
+CMD ["yarn", "start"]
