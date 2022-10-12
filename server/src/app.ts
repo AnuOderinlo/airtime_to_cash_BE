@@ -1,28 +1,32 @@
-import createError from 'http-errors'
+import createError from 'http-errors';
 import express, { Request, Response, NextFunction } from 'express';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
-import cors from 'cors'
+import cors from 'cors';
 
-import db from './config/database.config'
+import db from './config/database.config';
 import accountRouter from './routes/accounts';
 
-db.sync().then(() => {
-  console.log('Database Connected Successfully')
-}).catch(err => {
-  console.log(err)
-})
-
+db.sync()
+  .then(() => {
+    console.log('Database Connected Successfully');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 
 import indexRouter from './routes/indexRouter';
 import usersRouter from './routes/usersRouter';
 import transactionsRouter from './routes/transactionsRouter';
-import withdrawalRouter from './routes/withdrawalRouter'
+import withdrawalRouter from './routes/withdrawalRouter';
+import swaggerUI from 'swagger-ui-express';
+import YAML from 'yamljs';
+
+const swaggerDocument = YAML.load('./documentation.yaml');
 
 const app = express();
 app.use(cors()); // included cors
-
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -35,13 +39,14 @@ app.use('/users', usersRouter);
 app.use('/account', accountRouter);
 app.use('/transactions', transactionsRouter);
 app.use('/withdrawal', withdrawalRouter);
+app.use('/api/doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 // Error handling
 app.use(function (err: createError.HttpError, req: Request, res: Response, next: NextFunction) {
-  res.locals.message = err.message
-  res.locals.error = req.app.get('env') === 'development' ? err : {}
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  res.status(err.status || 500)
-})
+  res.status(err.status || 500);
+});
 
-export default app
+export default app;
