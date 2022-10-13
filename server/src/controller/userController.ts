@@ -331,29 +331,34 @@ export async function changePassword(req: Request, res: Response) {
 
 export async function creditWallet(req: Request, res: Response) {
   try {
-    const { amount, email } = req.body;
+    const { amount, id } = req.body;
+
     const user = await UserInstance.findOne({
       where: {
-        email: email
-      },
+        id
+      }
     })
 
     if (!user) {
       return res.status(404).json({
-        message: 'email not found',
+        message: 'user not found',
       });
     } else {
 
-      const { wallet } = user;
-      const newAmount = amount + wallet;
+      const { walletBalance } = user;
+
+      console.log({ walletBalance })
+      const newAmount = Number(amount) + Number(walletBalance);
+
+
       await user?.update({
         walletBalance: newAmount
       });
 
       res.status(200).json({
         message: 'Successfully updated wallet',
-        status: 1,
-        wallet: newAmount
+        status: true,
+        wallet: newAmount,
       });
     }
 
@@ -361,6 +366,39 @@ export async function creditWallet(req: Request, res: Response) {
     res.status(500).json({
       status: 'Failed',
       Message: 'Unable to update wallet',
+      error,
+    });
+  }
+}
+
+export async function getBalance(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+
+    const user = await UserInstance.findOne({
+      where: {
+        id
+      }
+    })
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'user not found',
+      });
+
+    } else {
+
+      res.status(200).json({
+        message: 'Successfully fetched wallet balance',
+        status: true,
+        balance: user.walletBalance
+      });
+    }
+
+  } catch (error) {
+    res.status(500).json({
+      status: false,
+      message: 'Unable to fetch wallet balance',
       error,
     });
   }

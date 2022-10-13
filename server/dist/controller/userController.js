@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.creditWallet = exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
+exports.getBalance = exports.creditWallet = exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -315,27 +315,28 @@ async function changePassword(req, res) {
 exports.changePassword = changePassword;
 async function creditWallet(req, res) {
     try {
-        const { amount, email } = req.body;
+        const { amount, id } = req.body;
         const user = await userModel_1.UserInstance.findOne({
             where: {
-                email: email
-            },
+                id
+            }
         });
         if (!user) {
             return res.status(404).json({
-                message: 'email not found',
+                message: 'user not found',
             });
         }
         else {
-            const { wallet } = user;
-            const newAmount = amount + wallet;
+            const { walletBalance } = user;
+            console.log({ walletBalance });
+            const newAmount = Number(amount) + Number(walletBalance);
             await user?.update({
                 walletBalance: newAmount
             });
             res.status(200).json({
                 message: 'Successfully updated wallet',
-                status: 1,
-                wallet: newAmount
+                status: true,
+                wallet: newAmount,
             });
         }
     }
@@ -348,3 +349,33 @@ async function creditWallet(req, res) {
     }
 }
 exports.creditWallet = creditWallet;
+async function getBalance(req, res) {
+    try {
+        const { id } = req.params;
+        const user = await userModel_1.UserInstance.findOne({
+            where: {
+                id
+            }
+        });
+        if (!user) {
+            return res.status(404).json({
+                message: 'user not found',
+            });
+        }
+        else {
+            res.status(200).json({
+                message: 'Successfully fetched wallet balance',
+                status: true,
+                balance: user.walletBalance
+            });
+        }
+    }
+    catch (error) {
+        res.status(500).json({
+            status: false,
+            message: 'Unable to fetch wallet balance',
+            error,
+        });
+    }
+}
+exports.getBalance = getBalance;

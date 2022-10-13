@@ -87,3 +87,30 @@ export async function getTransaction(req: Request, res: Response, next: NextFunc
     });
   }
 }
+
+export async function updateTransaction(req: Request, res: Response, next: NextFunction) {
+
+  try {
+
+
+    const transaction = await TransactionsInstance.findOne({
+      where: { id: req.body.id },
+    });
+
+    await transaction?.update({
+      status: req.body.status
+    });
+
+    return res.status(200).json({
+      message: `You have successfully updated transaction`,
+      success: true
+
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: 'internal server error',
+      route: '/update',
+      error,
+    });
+  }
+}
