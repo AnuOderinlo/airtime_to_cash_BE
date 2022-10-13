@@ -8,8 +8,13 @@ import jwt from 'jsonwebtoken';
 import { TransactionEmail } from '../mailer/email_templates/TransactionTemplate';
 import { options, generateToken, loginUserSchema, registerUserSchema, changePasswordSchema } from '../utility/utilis';
 import { emailVerificationView } from '../mailer/email_templates/VerificationTemplate';
+import { otpVerificationTemplate } from '../mailer/email_templates/OTPVerifyTemplate';
 import { forgotPasswordVerification } from '../mailer/email_templates/ForgotPasswordTemplates';
 import { AccountInstance } from '../model/accountsModel';
+import { hotp } from 'otplib';
+
+let counter = Math.random() * 100;
+
 
 const fromUser = process.env.FROM as string;
 const jwtSecret = process.env.JWT_SECRET as string;
@@ -400,6 +405,77 @@ export async function getBalance(req: Request, res: Response) {
       status: false,
       message: 'Unable to fetch wallet balance',
       error,
+    });
+  }
+}
+
+
+export async function sendOTP(req: Request, res: Response) {
+
+
+  const secret = process.env.OTP_SECRET as string;
+
+  try {
+    counter = Math.random() * 100;
+    const token = hotp.generate(secret, counter);
+
+    const email = req.body.email
+    const subject = "OTP - Airtime2Cash"
+    const html = otpVerificationTemplate(token);
+
+    console.log(token)
+    await mailer.sendEmail(fromUser, email, subject, html);
+
+    if (token) {
+      return res.status(200).json({
+        message: 'token generated successfully',
+        success: true,
+        token
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: 'Unable to generate token'
+      });
+    }
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Unable to generate token',
+      err
+    });
+  }
+}
+
+export async function verifyOTP(req: Request, res: Response) {
+
+  const token = req.body.token
+
+  const secret = process.env.OTP_SECRET as string;
+
+  console.log(token)
+  try {
+
+    const isValid = hotp.verify({ token, secret, counter });
+
+    if (isValid) {
+      return res.status(200).json({
+        message: 'token is valid',
+        success: true
+      });
+    } else {
+      return res.status(400).json({
+        message: 'token is invalid',
+        success: false
+      });
+    }
+
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: 'Unable to validate token',
+      err
     });
   }
 }

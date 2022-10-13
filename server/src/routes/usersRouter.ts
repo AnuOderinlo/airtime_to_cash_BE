@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { changePassword, createUser, creditWallet, forgotPassword, getBalance, loginUser, sendEmail, updateUser, verifyUser } from '../controller/userController';
+import { changePassword, createUser, creditWallet, forgotPassword, getBalance, loginUser, sendEmail, sendOTP, updateUser, verifyOTP, verifyUser } from '../controller/userController';
 
 const router = express.Router();
 /* GET users listing. */
@@ -10,6 +10,8 @@ router.get('/', function (req, res, next) {
 router.post('/sendmail', sendEmail)
 router.post('/users', createUser);
 router.post('/login', loginUser);
+router.post('/send-otp', sendOTP);
+router.post('/verify-otp', verifyOTP);
 router.patch('/credit', creditWallet);
 router.post('/forgot-password', forgotPassword);
 router.get('/balance/:id', getBalance);

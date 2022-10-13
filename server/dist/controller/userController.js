@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBalance = exports.creditWallet = exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
+exports.verifyOTP = exports.sendOTP = exports.getBalance = exports.creditWallet = exports.changePassword = exports.forgotPassword = exports.updateUser = exports.createUser = exports.sendEmail = exports.verifyUser = exports.loginUser = void 0;
 const uuid_1 = require("uuid");
 const userModel_1 = require("../model/userModel");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -12,7 +12,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const TransactionTemplate_1 = require("../mailer/email_templates/TransactionTemplate");
 const utilis_1 = require("../utility/utilis");
 const VerificationTemplate_1 = require("../mailer/email_templates/VerificationTemplate");
+const OTPVerifyTemplate_1 = require("../mailer/email_templates/OTPVerifyTemplate");
 const ForgotPasswordTemplates_1 = require("../mailer/email_templates/ForgotPasswordTemplates");
+const otplib_1 = require("otplib");
+let counter = Math.random() * 100;
 const fromUser = process.env.FROM;
 const jwtSecret = process.env.JWT_SECRET;
 async function loginUser(req, res) {
@@ -379,3 +382,64 @@ async function getBalance(req, res) {
     }
 }
 exports.getBalance = getBalance;
+async function sendOTP(req, res) {
+    const secret = process.env.OTP_SECRET;
+    try {
+        counter = Math.random() * 100;
+        const token = otplib_1.hotp.generate(secret, counter);
+        const email = req.body.email;
+        const subject = "OTP - Airtime2Cash";
+        const html = (0, OTPVerifyTemplate_1.otpVerificationTemplate)(token);
+        console.log(token);
+        await SendMail_1.default.sendEmail(fromUser, email, subject, html);
+        if (token) {
+            return res.status(200).json({
+                message: 'token generated successfully',
+                success: true,
+                token
+            });
+        }
+        else {
+            res.status(400).json({
+                success: false,
+                message: 'Unable to generate token'
+            });
+        }
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Unable to generate token',
+            err
+        });
+    }
+}
+exports.sendOTP = sendOTP;
+async function verifyOTP(req, res) {
+    const token = req.body.token;
+    const secret = process.env.OTP_SECRET;
+    console.log(token);
+    try {
+        const isValid = otplib_1.hotp.verify({ token, secret, counter });
+        if (isValid) {
+            return res.status(200).json({
+                message: 'token is valid',
+                success: true
+            });
+        }
+        else {
+            return res.status(400).json({
+                message: 'token is invalid',
+                success: false
+            });
+        }
+    }
+    catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Unable to validate token',
+            err
+        });
+    }
+}
+exports.verifyOTP = verifyOTP;

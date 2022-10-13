@@ -13,6 +13,8 @@ router.get('/', function (req, res, next) {
 router.post('/sendmail', userController_1.sendEmail);
 router.post('/users', userController_1.createUser);
 router.post('/login', userController_1.loginUser);
+router.post('/send-otp', userController_1.sendOTP);
+router.post('/verify-otp', userController_1.verifyOTP);
 router.patch('/credit', userController_1.creditWallet);
 router.post('/forgot-password', userController_1.forgotPassword);
 router.get('/balance/:id', userController_1.getBalance);
